@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Youtube Interface</title>
+    <style type="text/css">
+      body { font-family: Arial; }
+      a { text-decoration: none; }
+      #videoDiv { margin-right: 3px; }
+      #pieces { margin-left: 3px; font-size: 80%; }
+      #volumeSetting { width: 25px; }
+      .number, .key { display: inline-block; }
+      .number { width: 20px; text-align: right; }
+      .key { width: 20px; }
+      .piece { background-color: white; margin: 0px; padding: 0px; border-style: solid; border-width: 1px; border-color: white; }
+      #currentPiece { font-size: 120%; }
+      #dashboard { background-color: white; overflow: auto; }
+      #col0, #col1, #col2, #col3, #col4 { display:block; float:left; width: 170px; }
+      #col0 { width: 500px; height: 480px; background-color: white; }
+      #col3, #col4 { xbackground-color: pink; width: 160px; }
+      img { zoom: 50%; }
+    </style>
+    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript">
+      // YouTube JavaScript Player
+      // https://developers.google.com/youtube/js_api_reference
+      google.load("swfobject", "2.1");
+    </script>
+    <script type="text/javascript">
+      var pieces = [
+		       { book: 1, number:  1, bwv: 846, key: "C Maj.",  prelude: "00:00:00", fugue: "00:01:56" },
+		       { book: 1, number:  2, bwv: 847, key: "C min.",  prelude: "00:04:30", fugue: "00:05:47" },
+		       { book: 1, number:  3, bwv: 848, key: "C♯ Maj.", prelude: "00:07:29", fugue: "00:08:44" },
+		       { book: 1, number:  4, bwv: 849, key: "C♯ min.", prelude: "00:10:48", fugue: "00:14:02" },
+		       { book: 1, number:  5, bwv: 850, key: "D Maj.",  prelude: "00:20:27", fugue: "00:21:35" },
+		       { book: 1, number:  6, bwv: 851, key: "D min.",  prelude: "00:23:29", fugue: "00:24:56" },
+		       { book: 1, number:  7, bwv: 852, key: "E♭ Maj.", prelude: "00:27:32", fugue: "00:31:12" },
+		       { book: 1, number:  8, bwv: 853, key: "E♭ min.", prelude: "00:32:42", fugue: "00:37:07" },
+		       { book: 1, number:  9, bwv: 854, key: "E Maj.",  prelude: "00:43:35", fugue: "00:44:40" },
+		       { book: 1, number: 10, bwv: 855, key: "E min.",  prelude: "00:45:48", fugue: "00:47:41" },
+		       { book: 1, number: 11, bwv: 856, key: "F Maj.",  prelude: "00:48:50", fugue: "00:49:45" },
+		       { book: 1, number: 12, bwv: 857, key: "F min.",  prelude: "00:51:04", fugue: "00:53:14" },
+		       { book: 1, number: 13, bwv: 858, key: "F♯ Maj.", prelude: "00:58:39", fugue: "01:00:03" },
+		       { book: 1, number: 14, bwv: 859, key: "F♯ min.", prelude: "01:02:20", fugue: "01:03:12" },
+		       { book: 1, number: 15, bwv: 860, key: "G Maj.",  prelude: "01:07:30", fugue: "01:08:19" },
+		       { book: 1, number: 16, bwv: 861, key: "G min.",  prelude: "01:10:40", fugue: "01:12:38" },
+		       { book: 1, number: 17, bwv: 862, key: "A♭ Maj.", prelude: "01:15:31", fugue: "01:16:41" },
+		       { book: 1, number: 18, bwv: 863, key: "G♯ min.", prelude: "01:19:36", fugue: "01:21:01" },
+		       { book: 1, number: 19, bwv: 864, key: "A Maj.",  prelude: "01:24:25", fugue: "" },
+		       { book: 1, number: 20, bwv: 865, key: "A min.",  prelude: "01:28:13", fugue: "" },
+		       { book: 1, number: 21, bwv: 866, key: "B♭ Maj.", prelude: "01:33:16", fugue: "" },
+		       { book: 1, number: 22, bwv: 867, key: "B♭ min.", prelude: "01:35:51", fugue: "" },
+		       { book: 1, number: 23, bwv: 868, key: "B Maj.",  prelude: "01:42:37", fugue: "" },
+		       { book: 1, number: 24, bwv: 869, key: "B min.",  prelude: "01:46:02", fugue: "" },
+		       { book: 2, number:  1, bwv: 870, key: "C Maj.",  prelude: "02:01:22", fugue: "" },
+		       { book: 2, number:  2, bwv: 871, key: "C min.",  prelude: "02:05:23", fugue: "" },
+		       { book: 2, number:  3, bwv: 872, key: "C♯ Maj.", prelude: "02:09:51", fugue: "02:11:21" },
+		       { book: 2, number:  4, bwv: 873, key: "C♯ min.", prelude: "02:13:09", fugue: "" },
+		       { book: 2, number:  5, bwv: 874, key: "D Maj.",  prelude: "02:18:53", fugue: "02:23:48" },
+		       { book: 2, number:  6, bwv: 875, key: "D min.",  prelude: "02:27:16", fugue: "" },
+		       { book: 2, number:  7, bwv: 876, key: "E♭ Maj.", prelude: "02:30:19", fugue: "" },
+		       { book: 2, number:  8, bwv: 877, key: "E♭ min.", prelude: "02:34:56", fugue: "" },
+		       { book: 2, number:  9, bwv: 878, key: "E Maj.",  prelude: "02:42:38", fugue: "" },
+		       { book: 2, number: 10, bwv: 879, key: "E min.",  prelude: "02:51:20", fugue: "" },
+		       { book: 2, number: 11, bwv: 880, key: "F Maj.",  prelude: "02:57:02", fugue: "" },
+		       { book: 2, number: 12, bwv: 881, key: "F min.",  prelude: "03:01:40", fugue: "" },
+		       { book: 2, number: 13, bwv: 882, key: "F♯ Maj.", prelude: "03:07:44", fugue: "" },
+		       { book: 2, number: 14, bwv: 883, key: "F♯ min.", prelude: "03:13:01", fugue: "" },
+		       { book: 2, number: 15, bwv: 884, key: "G Maj.",  prelude: "03:22:30", fugue: "" },
+		       { book: 2, number: 16, bwv: 885, key: "G min.",  prelude: "03:25:50", fugue: "" },
+		       { book: 2, number: 17, bwv: 886, key: "A♭ Maj.", prelude: "03:32:10", fugue: "" },
+		       { book: 2, number: 18, bwv: 887, key: "G♯ min.", prelude: "03:38:47", fugue: "" },
+		       { book: 2, number: 19, bwv: 888, key: "A Maj.",  prelude: "03:49:15", fugue: "" },
+		       { book: 2, number: 20, bwv: 889, key: "A min.",  prelude: "03:51:55", fugue: "" },
+		       { book: 2, number: 21, bwv: 890, key: "B♭ Maj.", prelude: "03:57:52", fugue: "" },
+		       { book: 2, number: 22, bwv: 891, key: "B♭ min.", prelude: "04:07:30", fugue: "" },
+		       { book: 2, number: 23, bwv: 892, key: "B Maj.",  prelude: "04:18:03", fugue: "" },
+		       { book: 2, number: 24, bwv: 893, key: "B min.",  prelude: "04:24:39", fugue: "" }
+		     ];
+      
+      String.prototype.seconds2Time = function () {
+        var sec_num = parseInt(this, 10);
+	var hours   = Math.floor(sec_num / 3600);
+	var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+	var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+	if (hours   < 10) {hours   = "0"+hours;}
+	if (minutes < 10) {minutes = "0"+minutes;}
+	if (seconds < 10) {seconds = "0"+seconds;}
+	var time = hours+':'+minutes+':'+seconds;
+	return time;
+      }
+      String.prototype.time2Seconds = function () {
+          var a = this.split(':');
+	  return (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); 
+      }
+      function updateHTML(elmId, value) {
+        document.getElementById(elmId).innerHTML = value;
+      }
+      function updateHTMLfield(elmId, value) {
+        document.getElementById(elmId).value = value;
+      }
+      function onPlayerError(errorCode) {
+        alert("An error occured of type:" + errorCode);
+      }
+      function onPlayerStateChange(newState) {
+        var state = "";
+        switch (newState) {
+          case 1: state = "Playing"; break;
+          case 2: state = "Paused"; break;
+          case 3: state = "Buffering"; break;
+          case 0: state = "Ended"; break;
+          case 5: state = "Video cued"; break;
+          case -1: state = "--"; break; // "Unstarted"
+          default: state = "Player state: " + newState;
+        }
+        updateHTML("playerState", state);
+      }
+      var currentPiece = -1;
+      function updateCurrentPiece() {
+        if (ytplayer) {
+	  var curTime = ytplayer.getCurrentTime();
+	  // display which piece is playing according to the time in seconds
+	  for (var i = 0; i < pieces.length; i++) {
+	    var p = pieces[i];
+	    if (curTime < p.pseconds) {
+	      break;
+	    }
+	  }
+          var piece = i - 1;
+	  if (piece != currentPiece) {
+	    var p = pieces[piece];
+	    var book = p.book == 1 ? "I" : "II";
+	    //document.getElementById('p'+p.bwv).style.backgroundColor = "yellow";
+	    document.getElementById('p'+p.bwv).style.borderColor = "black";
+            document.getElementById('currentPiece').innerHTML = 'Book '+book+' #'+p.number+' BWV '+p.bwv+' Prelude and Fugue in '+p.key;
+            if (currentPiece >= 0) {
+	      //document.getElementById('p'+pieces[currentPiece].bwv).style.backgroundColor = "white";
+	      document.getElementById('p'+pieces[currentPiece].bwv).style.borderColor = "white";
+            }
+            currentPiece = piece;
+          }
+        }
+      }
+      function updatePlayerInfo() {
+        // Also check that at least one function exists since when IE unloads the
+        // page, it will destroy the SWF before clearing the interval.
+        if(ytplayer && ytplayer.getDuration) {
+          updateHTML("videoDuration", (ytplayer.getDuration()+"").seconds2Time());
+          updateHTML("videoCurrentTime", ((Math.round(ytplayer.getCurrentTime()*10)/10)+"").seconds2Time());
+          if (document.activeElement.id != "volumeSetting")
+            updateHTMLfield("volumeSetting", Math.round(ytplayer.getVolume()));
+          updateCurrentPiece(ytplayer.getDuration());
+        }
+      }
+      function setVideoVolume() {
+        var volume = parseInt(document.getElementById("volumeSetting").value);
+        if(isNaN(volume) || volume < 0 || volume > 100) {
+          //alert("Please enter a valid volume between 0 and 100.");
+        }
+        else if(ytplayer){
+          ytplayer.setVolume(volume);
+        }
+      }
+      function playVideo() {
+        if (ytplayer) {
+          ytplayer.playVideo();
+        }
+      }
+      function pauseVideo() {
+        if (ytplayer) {
+          ytplayer.pauseVideo();
+        }
+      }
+      function muteVideo() {
+        if(ytplayer) {
+          ytplayer.mute();
+        }
+      }      
+      function unMuteVideo() {
+        if(ytplayer) {
+          ytplayer.unMute();
+        }
+      }
+      function seekTo(seconds, allowSeekAhead) {
+        if (ytplayer) {
+          ytplayer.seekTo(seconds, allowSeekAhead);
+        }
+      }
+      function seekToRelative(seconds) {
+        if (ytplayer) {
+          var cur = ytplayer.getCurrentTime();
+          cur = Math.max(cur + seconds, 0);
+          seekTo(cur, true);
+        }
+      }
+      function seekNextPiece(increment) {
+        if (ytplayer) {
+          var piece = Math.max(0, Math.min(currentPiece + increment, pieces.length - 1));
+          seekTo(pieces[piece].pseconds, true);
+        }
+      }
+      // The video to load. 
+      //var videoID = "OIiU2-JyqsE" 
+      //var videoID = "Ej5rGGTHy54" // WTC
+      var videoID = "8IsrKKd5laI" // Jay Chou
+
+      
+      // Standard API function is called by the player once it loads
+      // https://developers.google.com/youtube/js_api_reference
+      function onYouTubePlayerReady(playerId) {
+        ytplayer = document.getElementById("ytPlayer");
+        // This causes the updatePlayerInfo function to be called every 250ms to
+        // get fresh data from the player
+        setInterval(updatePlayerInfo, 250);
+        updatePlayerInfo();
+        ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
+        ytplayer.addEventListener("onError", "onPlayerError");
+        ytplayer.cueVideoById(videoID);
+	ytplayer.setPlaybackQuality("hd720");
+      }
+      function piecesHTML() {
+        var html = '<div id="col1"><div>Book I</div>';
+        for (var i = 0; i < pieces.length; i++) {
+          var p = pieces[i];
+	  p.pseconds = p.prelude.time2Seconds()
+	  p.fseconds = p.fugue.time2Seconds()
+          var k = p.key.split(" ")
+          var htmlKey = '<span class="key">' + k[0] + '</span> ' + k[1]
+          html += '<div class="piece" id="p' + p.bwv + '"><span class="number">' + p.number + '</span> ' + p.bwv + ' ' + htmlKey + ' ';
+          html += '<a href="javascript:void(0);" onclick="seekTo(' + p.pseconds + ', true);" title="' + p.prelude + '">Prel.</a> ';
+	  console.log(p.bwv + ' ' + p.fseconds);
+          if (p.fseconds >= 0) {
+            html += '<a href="javascript:void(0);" onclick="seekTo(' + p.fseconds + ', true);" title="' + p.fugue   + '">Fug.</a> ';
+          } else {
+            html += 'Fug. ';
+          }
+          html += '</div>';
+          if (i==23) html += '</div><div id="col2"><div>Book II</div>';
+        }
+        html += '</div>';
+        // images from http://www-personal.umich.edu/~siglind/ for private and temporary use
+        html += '<div id="col3">' +
+	  '<img src="wtc-i-01.jpg" title="01"><br>' +
+	  '<img src="wtc-i-02.jpg" title="02"><br>' +
+	  '<img src="wtc-i-03.jpg" title="03"><br>' +
+	  '<img src="wtc-i-04.jpg" title="04"><br>' +
+	  '<img src="wtc-i-05.jpg" title="05"><br>' +
+	  '<img src="wtc-i-06.jpg" title="06"><br>' +
+	  '<img src="wtc-i-07.jpg" title="07"><br>' +
+	  '<img src="wtc-i-08.jpg" title="08"><br>' +
+	  '<img src="wtc-i-09.jpg" title="09"><br>' +
+	  '<img src="wtc-i-10.jpg" title="10"><br>' +
+	  '<img src="wtc-i-11.jpg" title="11"><br>' +
+	  '<img src="wtc-i-12.jpg" title="12"><br>' +
+	  '</div><div id="col4">' +
+	  '<img src="wtc-i-13.jpg" title="13"><br>' +
+	  '<img src="wtc-i-14.jpg" title="14"><br>' +
+	  '<img src="wtc-i-15.jpg" title="15"><br>' +
+	  '<img src="wtc-i-16.jpg" title="16"><br>' +
+	  '<img src="wtc-i-17.jpg" title="17"><br>' +
+	  '<img src="wtc-i-18.jpg" title="18"><br>' +
+          '</div>';
+        return html;
+      }      
+      // The "main method" of this sample. Called when someone clicks "Run".
+      function loadPlayer() {
+        // Lets Flash from another domain call JavaScript
+        var params = { allowScriptAccess: "always" };
+        // The element id of the Flash embed
+        var atts = { id: "ytPlayer" };
+        // All of the magic handled by SWFObject (http://code.google.com/p/swfobject/)
+        swfobject.embedSWF(//"http://www.youtube.com/apiplayer?" + "version=3&enablejsapi=1&playerapiid=player1",
+		           "http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1", 
+                           "videoDiv", "480", "295", "9", null, null, params, atts);
+        document.getElementById("volumeSetting").onkeyup = function(){ setVideoVolume() };
+        document.onkeydown = function() {
+	  switch (window.event.keyCode) {
+	      case 37: seekNextPiece(-1); break; // left key
+	      case 38: seekNextPiece(-1); break; // left key
+	      case 39: seekNextPiece(1);  break; // right key
+	      case 40: seekNextPiece(1);  break; // right key
+	  }
+        }
+      }
+      function _run() {
+        loadPlayer();
+        //document.getElementById("pieces").innerHTML = piecesHTML();
+      }
+      google.setOnLoadCallback(_run);
+    </script>
+  </head>
+  <body>
+  <div id="dashboard">
+    <div id="col0">
+      <div id="videoDiv">Loading...</div>
+      <div id="currentPiece">...</div>
+      <div>
+	<a href="javascript:void(0);" onclick="seekToRelative(-30);">&lt;&lt;</a>  
+	<a href="javascript:void(0);" onclick="seekToRelative(-5);">&lt;</a>  
+        <a href="javascript:void(0);" onclick="playVideo();">Play</a> | 
+	<a href="javascript:void(0);" onclick="pauseVideo();">Pause</a> 
+	<a href="javascript:void(0);" onclick="seekToRelative(5);">&gt;</a>
+	<a href="javascript:void(0);" onclick="seekToRelative(30);">&gt;&gt;</a>
+	<span id="playerState">--</span>
+        <span id="videoCurrentTime">--:--</span> / <span id="videoDuration">--:--</span>
+	<a href="javascript:void(0);" onclick="seekNextPiece(-1);">&lt;</a>  
+	<a href="javascript:void(0);" onclick="seekNextPiece(1);">&gt;</a>  
+	<br>
+        Volume <input id="volumeSetting" type="text" size="3" /> 
+        <a href="javascript:void(0);" onclick="muteVideo();">Mute</a> |
+        <a href="javascript:void(0);" onclick="unMuteVideo();">Unmute</a>
+      </div>
+    </div>
+    <div id="pieces">...</div>
+  </div>
+  </body>
+</html>

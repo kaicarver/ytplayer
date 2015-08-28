@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
-    <title>Youtube Player</title>
+    <title>Kai's YT Hack</title>
     <style type="text/css">
       body { font-family: Arial; }
       a { text-decoration: none; }
@@ -27,6 +27,18 @@
       google.load("swfobject", "2.1");
     </script>
     <script type="text/javascript">
+      var lyrics = [
+		       { start: "00:00:27", finish: "00:00:00", label: "對這個世界如果你有太多的抱怨" },
+		       { start: "00:00:31", finish: "00:00:00", label: "跌倒了就不敢繼續往前走" },
+		       { start: "00:00:34", finish: "00:00:00", label: "為什麼人要這麼的脆弱墮落" },
+		       { start: "00:00:38", finish: "00:00:00", label: "請你打開電視看看" },
+		       { start: "00:00:40", finish: "00:00:00", label: "多少人為生命在努力勇敢的走下去" },
+		       { start: "00:00:44", finish: "00:00:00", label: "我們是不是該知足" },
+		       { start: "00:00:46", finish: "00:00:00", label: "珍惜一切就算沒有擁有" },
+		       { start: "00:00:50", finish: "00:00:00", label: "Refrain" },
+		       { start: "00:00:51", finish: "00:00:00", label: "還記得你說家是唯一的城堡" },
+		       { start: "00:01:37", finish: "00:00:00", label: "Second verse" }
+      ];
       var pieces = [
 		       { book: 1, number:  1, bwv: 846, key: "C Maj.",  prelude: "00:00:00", fugue: "00:01:56" },
 		       { book: 1, number:  2, bwv: 847, key: "C min.",  prelude: "00:04:30", fugue: "00:05:47" },
@@ -219,6 +231,17 @@
         ytplayer.cueVideoById(videoID);
 	ytplayer.setPlaybackQuality("hd720");
       }
+      function lyricsHTML() {
+        var html = '<div>';
+	for (var i = 0; i < lyrics.length; i++) {
+	  var ly = lyrics[i];
+	  ly.startSec = ly.start.time2Seconds()
+          html += '<div class="piece" id="l' + i + '"><span class="label">' + ly.label+ '</span> ';
+          html += '<a href="javascript:void(0);" onclick="seekTo(' + ly.startSec + ', true);" title="' + ly.label + '">Go</a> ';
+	}
+        html += '</div>';
+        return html;	
+      }
       function piecesHTML() {
         var html = '<div id="col1"><div>Book I</div>';
         for (var i = 0; i < pieces.length; i++) {
@@ -239,28 +262,6 @@
           if (i==23) html += '</div><div id="col2"><div>Book II</div>';
         }
         html += '</div>';
-        // images from http://www-personal.umich.edu/~siglind/ for private and temporary use
-        html += '<div id="col3">' +
-	  '<img src="wtc-i-01.jpg" title="01"><br>' +
-	  '<img src="wtc-i-02.jpg" title="02"><br>' +
-	  '<img src="wtc-i-03.jpg" title="03"><br>' +
-	  '<img src="wtc-i-04.jpg" title="04"><br>' +
-	  '<img src="wtc-i-05.jpg" title="05"><br>' +
-	  '<img src="wtc-i-06.jpg" title="06"><br>' +
-	  '<img src="wtc-i-07.jpg" title="07"><br>' +
-	  '<img src="wtc-i-08.jpg" title="08"><br>' +
-	  '<img src="wtc-i-09.jpg" title="09"><br>' +
-	  '<img src="wtc-i-10.jpg" title="10"><br>' +
-	  '<img src="wtc-i-11.jpg" title="11"><br>' +
-	  '<img src="wtc-i-12.jpg" title="12"><br>' +
-	  '</div><div id="col4">' +
-	  '<img src="wtc-i-13.jpg" title="13"><br>' +
-	  '<img src="wtc-i-14.jpg" title="14"><br>' +
-	  '<img src="wtc-i-15.jpg" title="15"><br>' +
-	  '<img src="wtc-i-16.jpg" title="16"><br>' +
-	  '<img src="wtc-i-17.jpg" title="17"><br>' +
-	  '<img src="wtc-i-18.jpg" title="18"><br>' +
-          '</div>';
         return html;
       }      
       // The "main method" of this sample. Called when someone clicks "Run".
@@ -286,6 +287,7 @@
       function _run() {
         loadPlayer();
         //document.getElementById("pieces").innerHTML = piecesHTML();
+        document.getElementById("pieces").innerHTML = lyricsHTML();
       }
       google.setOnLoadCallback(_run);
     </script>

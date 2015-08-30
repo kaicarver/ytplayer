@@ -7,13 +7,13 @@
       body { font-family: Arial; }
       a { text-decoration: none; }
       #videoDiv { margin-right: 3px; }
-      #pieces { margin-left: 3px; font-size: 80%; }
+      #lyrics { margin-left: 3px; font-size: 80%; }
       #volumeSetting { width: 25px; }
       .number, .key { display: inline-block; }
       .number { width: 20px; text-align: right; }
       .key { width: 20px; }
-      .piece { background-color: white; margin: 0px; padding: 0px; border-style: solid; border-width: 1px; border-color: white; }
-      #currentPiece { font-size: 120%; }
+      .lyric { background-color: white; margin: 0px; padding: 0px; border-style: solid; border-width: 1px; border-color: white; }
+      #currentLyric { font-size: 120%; }
       #dashboard { background-color: white; overflow: auto; }
       #col0, #col1, #col2, #col3, #col4 { display:block; float:left; width: 170px; }
       #col0 { width: 500px; height: 480px; background-color: white; }
@@ -28,6 +28,7 @@
     </script>
     <script type="text/javascript">
       var lyrics = [
+		       { start: "00:00:27", finish: "00:00:00", label: "First verse" },
 		       { start: "00:00:27", finish: "00:00:00", label: "對這個世界如果你有太多的抱怨" },
 		       { start: "00:00:31", finish: "00:00:00", label: "跌倒了就不敢繼續往前走" },
 		       { start: "00:00:34", finish: "00:00:00", label: "為什麼人要這麼的脆弱墮落" },
@@ -35,60 +36,30 @@
 		       { start: "00:00:40", finish: "00:00:00", label: "多少人為生命在努力勇敢的走下去" },
 		       { start: "00:00:44", finish: "00:00:00", label: "我們是不是該知足" },
 		       { start: "00:00:46", finish: "00:00:00", label: "珍惜一切就算沒有擁有" },
-		       { start: "00:00:50", finish: "00:00:00", label: "Refrain" },
+		       { start: "00:00:50", finish: "00:00:00", label: "Chorus" },
 		       { start: "00:00:51", finish: "00:00:00", label: "還記得你說家是唯一的城堡" },
-		       { start: "00:01:37", finish: "00:00:00", label: "Second verse" }
+		       { start: "00:00:54", finish: "00:00:00", label: "隨著稻香河流繼續奔跑" },
+		       { start: "00:00:57", finish: "00:00:00", label: "微微笑小時候的夢我知道" },
+		       { start: "00:01:02", finish: "00:00:00", label: "不要哭讓螢火蟲帶著你逃跑" },
+		       { start: "00:01:06", finish: "00:00:00", label: "鄉間的歌謠永遠的依靠" },
+		       { start: "00:01:09", finish: "00:00:00", label: "回家吧回到最初的美好" },
+		       { start: "00:01:37", finish: "00:00:00", label: "Second verse" },
+		       { start: "00:01:37.5", finish: "00:00:00", label: "不要這麼容易就想放棄" },
+		       { start: "00:01:41.3", finish: "00:00:00", label: "追不到的夢想換個夢不就得了" },
+		       { start: "00:01:44.5", finish: "00:00:00", label: "為自己的人生鮮艷上色" },
+		       { start: "00:01:46.5", finish: "00:00:00", label: "先把愛塗上喜歡的顏色" },
+		       { start: "00:01:49.5", finish: "00:00:00", label: "笑一個吧功成名就不是目的" },
+		       { start: "00:01:52.3", finish: "00:00:00", label: "讓自己快樂快樂這才叫做意義" },
+		       { start: "00:01:55.3", finish: "00:00:00", label: "童年的紙飛機現在終於飛回我手裡" },
+		       { start: "00:02:00", finish: "00:00:00", label: "所謂的那快樂" },
+		       { start: "00:02:02.3", finish: "00:00:00", label: "赤腳在田裡追蜻蜓追到累了" },
+		       { start: "00:02:05", finish: "00:00:00", label: "偷摘水果被蜜蜂給叮到怕了" },
+		       { start: "00:02:08", finish: "00:00:00", label: "誰在偷笑呢" },
+		       { start: "00:02:10", finish: "00:00:00", label: "我靠著稻草人吹著風唱著歌睡著了" },
+		       { start: "00:02:13", finish: "00:00:00", label: "哦哦午後吉它在蟲鳴中更清脆" },
+		       { start: "00:02:16", finish: "00:00:00", label: "哦哦陽光灑在路上就不怕心碎" },
+		       { start: "00:02:20", finish: "00:00:00", label: "珍惜一切就算沒有擁有" }
       ];
-      var pieces = [
-		       { book: 1, number:  1, bwv: 846, key: "C Maj.",  prelude: "00:00:00", fugue: "00:01:56" },
-		       { book: 1, number:  2, bwv: 847, key: "C min.",  prelude: "00:04:30", fugue: "00:05:47" },
-		       { book: 1, number:  3, bwv: 848, key: "C♯ Maj.", prelude: "00:07:29", fugue: "00:08:44" },
-		       { book: 1, number:  4, bwv: 849, key: "C♯ min.", prelude: "00:10:48", fugue: "00:14:02" },
-		       { book: 1, number:  5, bwv: 850, key: "D Maj.",  prelude: "00:20:27", fugue: "00:21:35" },
-		       { book: 1, number:  6, bwv: 851, key: "D min.",  prelude: "00:23:29", fugue: "00:24:56" },
-		       { book: 1, number:  7, bwv: 852, key: "E♭ Maj.", prelude: "00:27:32", fugue: "00:31:12" },
-		       { book: 1, number:  8, bwv: 853, key: "E♭ min.", prelude: "00:32:42", fugue: "00:37:07" },
-		       { book: 1, number:  9, bwv: 854, key: "E Maj.",  prelude: "00:43:35", fugue: "00:44:40" },
-		       { book: 1, number: 10, bwv: 855, key: "E min.",  prelude: "00:45:48", fugue: "00:47:41" },
-		       { book: 1, number: 11, bwv: 856, key: "F Maj.",  prelude: "00:48:50", fugue: "00:49:45" },
-		       { book: 1, number: 12, bwv: 857, key: "F min.",  prelude: "00:51:04", fugue: "00:53:14" },
-		       { book: 1, number: 13, bwv: 858, key: "F♯ Maj.", prelude: "00:58:39", fugue: "01:00:03" },
-		       { book: 1, number: 14, bwv: 859, key: "F♯ min.", prelude: "01:02:20", fugue: "01:03:12" },
-		       { book: 1, number: 15, bwv: 860, key: "G Maj.",  prelude: "01:07:30", fugue: "01:08:19" },
-		       { book: 1, number: 16, bwv: 861, key: "G min.",  prelude: "01:10:40", fugue: "01:12:38" },
-		       { book: 1, number: 17, bwv: 862, key: "A♭ Maj.", prelude: "01:15:31", fugue: "01:16:41" },
-		       { book: 1, number: 18, bwv: 863, key: "G♯ min.", prelude: "01:19:36", fugue: "01:21:01" },
-		       { book: 1, number: 19, bwv: 864, key: "A Maj.",  prelude: "01:24:25", fugue: "" },
-		       { book: 1, number: 20, bwv: 865, key: "A min.",  prelude: "01:28:13", fugue: "" },
-		       { book: 1, number: 21, bwv: 866, key: "B♭ Maj.", prelude: "01:33:16", fugue: "" },
-		       { book: 1, number: 22, bwv: 867, key: "B♭ min.", prelude: "01:35:51", fugue: "" },
-		       { book: 1, number: 23, bwv: 868, key: "B Maj.",  prelude: "01:42:37", fugue: "" },
-		       { book: 1, number: 24, bwv: 869, key: "B min.",  prelude: "01:46:02", fugue: "" },
-		       { book: 2, number:  1, bwv: 870, key: "C Maj.",  prelude: "02:01:22", fugue: "" },
-		       { book: 2, number:  2, bwv: 871, key: "C min.",  prelude: "02:05:23", fugue: "" },
-		       { book: 2, number:  3, bwv: 872, key: "C♯ Maj.", prelude: "02:09:51", fugue: "02:11:21" },
-		       { book: 2, number:  4, bwv: 873, key: "C♯ min.", prelude: "02:13:09", fugue: "" },
-		       { book: 2, number:  5, bwv: 874, key: "D Maj.",  prelude: "02:18:53", fugue: "02:23:48" },
-		       { book: 2, number:  6, bwv: 875, key: "D min.",  prelude: "02:27:16", fugue: "" },
-		       { book: 2, number:  7, bwv: 876, key: "E♭ Maj.", prelude: "02:30:19", fugue: "" },
-		       { book: 2, number:  8, bwv: 877, key: "E♭ min.", prelude: "02:34:56", fugue: "" },
-		       { book: 2, number:  9, bwv: 878, key: "E Maj.",  prelude: "02:42:38", fugue: "" },
-		       { book: 2, number: 10, bwv: 879, key: "E min.",  prelude: "02:51:20", fugue: "" },
-		       { book: 2, number: 11, bwv: 880, key: "F Maj.",  prelude: "02:57:02", fugue: "" },
-		       { book: 2, number: 12, bwv: 881, key: "F min.",  prelude: "03:01:40", fugue: "" },
-		       { book: 2, number: 13, bwv: 882, key: "F♯ Maj.", prelude: "03:07:44", fugue: "" },
-		       { book: 2, number: 14, bwv: 883, key: "F♯ min.", prelude: "03:13:01", fugue: "" },
-		       { book: 2, number: 15, bwv: 884, key: "G Maj.",  prelude: "03:22:30", fugue: "" },
-		       { book: 2, number: 16, bwv: 885, key: "G min.",  prelude: "03:25:50", fugue: "" },
-		       { book: 2, number: 17, bwv: 886, key: "A♭ Maj.", prelude: "03:32:10", fugue: "" },
-		       { book: 2, number: 18, bwv: 887, key: "G♯ min.", prelude: "03:38:47", fugue: "" },
-		       { book: 2, number: 19, bwv: 888, key: "A Maj.",  prelude: "03:49:15", fugue: "" },
-		       { book: 2, number: 20, bwv: 889, key: "A min.",  prelude: "03:51:55", fugue: "" },
-		       { book: 2, number: 21, bwv: 890, key: "B♭ Maj.", prelude: "03:57:52", fugue: "" },
-		       { book: 2, number: 22, bwv: 891, key: "B♭ min.", prelude: "04:07:30", fugue: "" },
-		       { book: 2, number: 23, bwv: 892, key: "B Maj.",  prelude: "04:18:03", fugue: "" },
-		       { book: 2, number: 24, bwv: 893, key: "B min.",  prelude: "04:24:39", fugue: "" }
-		     ];
       
       String.prototype.seconds2Time = function () {
         var sec_num = parseInt(this, 10);
@@ -128,29 +99,28 @@
         }
         updateHTML("playerState", state);
       }
-      var currentPiece = -1;
-      function updateCurrentPiece() {
+      var currentLyric = -1;
+      function updateCurrentLyric() {
         if (ytplayer) {
 	  var curTime = ytplayer.getCurrentTime();
-	  // display which piece is playing according to the time in seconds
-	  for (var i = 0; i < pieces.length; i++) {
-	    var p = pieces[i];
-	    if (curTime < p.pseconds) {
+	  // display which lyric is playing according to the time in seconds
+	  for (var i = 0; i < lyrics.length; i++) {
+	    var ly = lyrics[i];
+	    if (curTime < ly.pseconds) {
 	      break;
 	    }
 	  }
-          var piece = i - 1;
-	  if (piece != currentPiece) {
-	    var p = pieces[piece];
-	    var book = p.book == 1 ? "I" : "II";
-	    //document.getElementById('p'+p.bwv).style.backgroundColor = "yellow";
-	    document.getElementById('p'+p.bwv).style.borderColor = "black";
-            document.getElementById('currentPiece').innerHTML = 'Book '+book+' #'+p.number+' BWV '+p.bwv+' Prelude and Fugue in '+p.key;
-            if (currentPiece >= 0) {
-	      //document.getElementById('p'+pieces[currentPiece].bwv).style.backgroundColor = "white";
-	      document.getElementById('p'+pieces[currentPiece].bwv).style.borderColor = "white";
+          var lyric = i - 1;
+	  if (lyric != currentLyric) {
+	    var ly = lyrics[lyric];
+	    //document.getElementById('l'+lyric).style.backgroundColor = "yellow";
+	    document.getElementById('l'+lyric).style.borderColor = "black";
+            document.getElementById('currentLyric').innerHTML = ly.label;
+            if (currentLyric >= 0) {
+	      //document.getElementById('l'+lyric).style.backgroundColor = "white";
+	      document.getElementById('l'+lyric).style.borderColor = "white";
             }
-            currentPiece = piece;
+            currentLyric = lyric;
           }
         }
       }
@@ -162,7 +132,7 @@
           updateHTML("videoCurrentTime", ((Math.round(ytplayer.getCurrentTime()*10)/10)+"").seconds2Time());
           if (document.activeElement.id != "volumeSetting")
             updateHTMLfield("volumeSetting", Math.round(ytplayer.getVolume()));
-          updateCurrentPiece(ytplayer.getDuration());
+          //updateCurrentLyric(ytplayer.getDuration());
         }
       }
       function setVideoVolume() {
@@ -206,10 +176,10 @@
           seekTo(cur, true);
         }
       }
-      function seekNextPiece(increment) {
+      function seekNextLyric(increment) {
         if (ytplayer) {
-          var piece = Math.max(0, Math.min(currentPiece + increment, pieces.length - 1));
-          seekTo(pieces[piece].pseconds, true);
+          var lyric = Math.max(0, Math.min(currentLyric + increment, lyrics.length - 1));
+          seekTo(lyrics[lyric].pseconds, true);
         }
       }
       // The video to load. 
@@ -236,34 +206,12 @@
 	for (var i = 0; i < lyrics.length; i++) {
 	  var ly = lyrics[i];
 	  ly.startSec = ly.start.time2Seconds()
-          html += '<div class="piece" id="l' + i + '"><span class="label">' + ly.label+ '</span> ';
-          html += '<a href="javascript:void(0);" onclick="seekTo(' + ly.startSec + ', true);" title="' + ly.label + '">Go</a> ';
+          html += '<div class="lyric" id="l' + i + '"><span class="label">' + ly.label+ '</span> ';
+          html += '<a href="javascript:void(0);" onclick="seekTo(' + ly.startSec + ', true);" title="' + ly.start + '">Go</a> ';
 	}
         html += '</div>';
         return html;	
       }
-      function piecesHTML() {
-        var html = '<div id="col1"><div>Book I</div>';
-        for (var i = 0; i < pieces.length; i++) {
-          var p = pieces[i];
-	  p.pseconds = p.prelude.time2Seconds()
-	  p.fseconds = p.fugue.time2Seconds()
-          var k = p.key.split(" ")
-          var htmlKey = '<span class="key">' + k[0] + '</span> ' + k[1]
-          html += '<div class="piece" id="p' + p.bwv + '"><span class="number">' + p.number + '</span> ' + p.bwv + ' ' + htmlKey + ' ';
-          html += '<a href="javascript:void(0);" onclick="seekTo(' + p.pseconds + ', true);" title="' + p.prelude + '">Prel.</a> ';
-	  console.log(p.bwv + ' ' + p.fseconds);
-          if (p.fseconds >= 0) {
-            html += '<a href="javascript:void(0);" onclick="seekTo(' + p.fseconds + ', true);" title="' + p.fugue   + '">Fug.</a> ';
-          } else {
-            html += 'Fug. ';
-          }
-          html += '</div>';
-          if (i==23) html += '</div><div id="col2"><div>Book II</div>';
-        }
-        html += '</div>';
-        return html;
-      }      
       // The "main method" of this sample. Called when someone clicks "Run".
       function loadPlayer() {
         // Lets Flash from another domain call JavaScript
@@ -277,17 +225,16 @@
         document.getElementById("volumeSetting").onkeyup = function(){ setVideoVolume() };
         document.onkeydown = function() {
 	  switch (window.event.keyCode) {
-	      case 37: seekNextPiece(-1); break; // left key
-	      case 38: seekNextPiece(-1); break; // left key
-	      case 39: seekNextPiece(1);  break; // right key
-	      case 40: seekNextPiece(1);  break; // right key
+	      case 37: seekNextLyric(-1); break; // left key
+	      case 38: seekNextLyric(-1); break; // left key
+	      case 39: seekNextLyric(1);  break; // right key
+	      case 40: seekNextLyric(1);  break; // right key
 	  }
         }
       }
       function _run() {
         loadPlayer();
-        //document.getElementById("pieces").innerHTML = piecesHTML();
-        document.getElementById("pieces").innerHTML = lyricsHTML();
+        document.getElementById("lyrics").innerHTML = lyricsHTML();
       }
       google.setOnLoadCallback(_run);
     </script>
@@ -296,7 +243,7 @@
   <div id="dashboard">
     <div id="col0">
       <div id="videoDiv">Loading...</div>
-      <div id="currentPiece">...</div>
+      <div id="currentLyric">...</div>
       <div>
 	<a href="javascript:void(0);" onclick="seekToRelative(-30);">&lt;&lt;</a>  
 	<a href="javascript:void(0);" onclick="seekToRelative(-5);">&lt;</a>  
@@ -306,15 +253,15 @@
 	<a href="javascript:void(0);" onclick="seekToRelative(30);">&gt;&gt;</a>
 	<span id="playerState">--</span>
         <span id="videoCurrentTime">--:--</span> / <span id="videoDuration">--:--</span>
-	<a href="javascript:void(0);" onclick="seekNextPiece(-1);">&lt;</a>  
-	<a href="javascript:void(0);" onclick="seekNextPiece(1);">&gt;</a>  
+	<a href="javascript:void(0);" onclick="seekNextLyric(-1);">&lt;</a>  
+	<a href="javascript:void(0);" onclick="seekNextLyric(1);">&gt;</a>  
 	<br>
         Volume <input id="volumeSetting" type="text" size="3" /> 
         <a href="javascript:void(0);" onclick="muteVideo();">Mute</a> |
         <a href="javascript:void(0);" onclick="unMuteVideo();">Unmute</a>
       </div>
     </div>
-    <div id="pieces">...</div>
+    <div id="lyrics">...</div>
   </div>
   </body>
 </html>

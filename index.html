@@ -15,6 +15,7 @@
       #currentLyric .hanzi { font-size: 130%; }
       #currentLyric .pinyin { font-size: 75%; }
       #currentLyric .english { font-size: 70%; font-style: italic; font-family: Times; }
+      #controls { text-align: center; }
       #dashboard { background-color: white; overflow: auto; }
       #col0 { display:block; float:left; width: 500px; height: 55em; background-color: white; }
     </style>
@@ -312,8 +313,9 @@
         }
       }
       function playVideo() {
-        if (ytplayer) {
-          ytplayer.playVideo();
+	if (ytplayer) {
+	  playOnlyLyric = -1;
+	  ytplayer.playVideo();
         }
       }
       function pauseVideo() {
@@ -339,16 +341,10 @@
 	}
 	seekTo(lyrics[lyricNumber].startSec, true);
       }
-      var togglePlaying = false;
       function seekTo(seconds, allowSeekAhead) {
         if (ytplayer) {
 	  ytplayer.seekTo(seconds, allowSeekAhead);
-	  if (togglePlaying) {
-	    pauseVideo();
-	  } else {
-	    playVideo();
-	  }
-	  //togglePlaying = !togglePlaying;
+	  ytplayer.playVideo();
         }
       }
       function seekToRelative(seconds) {
@@ -359,10 +355,8 @@
         }
       }
       function seekNextLyric(increment) {
-        if (ytplayer) {
-          var lyric = Math.max(0, Math.min(currentLyric + increment, lyrics.length - 1));
-          seekTo(lyrics[lyric].startSec, true);
-        }
+	var lyric = Math.max(0, Math.min(currentLyric + increment, lyrics.length - 1));
+	playLyric(lyric, true);
       }
       // The video to load. 
       //var videoID = "OIiU2-JyqsE" 
@@ -407,12 +401,15 @@
                            "videoDiv", "480", "295", "9", null, null, params, atts);
         document.getElementById("volumeSetting").onkeyup = function(){ setVideoVolume() };
         document.onkeydown = function() {
+	  console.log(window.event.keyCode);
 	  switch (window.event.keyCode) {
-	      case 37: seekNextLyric(-1); break; // left key
-	      case 38: seekNextLyric(-1); break; // left key
-	      case 39: seekNextLyric(1);  break; // right key
-	      case 40: seekNextLyric(1);  break; // right key
+	      case 37: seekNextLyric(-1); return false;; // ← Left key
+	      case 38: seekNextLyric(-1); return false;; // ↑ Up key
+	      case 13: seekNextLyric(0);  return false;; // ↵ Enter key
+	      case 39: seekNextLyric(1);  return false;; // → Right key
+	      case 40: seekNextLyric(1);  return false;; // ↓ Down key
 	  }
+	  return true;
         }
       }
       function _run() {
@@ -427,17 +424,20 @@
     <div id="col0">
       <div id="videoDiv">Loading...</div>
       <div id="currentLyric">...</div>
-      <div>
+      <div id="controls">
+	<a href="javascript:void(0);" onclick="seekNextLyric(-1);" title="Previous lyric ←,↑">&lt;====</a>  
+	<a href="javascript:void(0);" onclick="seekNextLyric(0);" title="Repeat lyric ↵">======</a>  
+	<a href="javascript:void(0);" onclick="seekNextLyric(1);" title="Next lyric →,↓">====&gt;</a>  
+	<br>
+	<span id="playerState">--</span>
+        <span id="videoCurrentTime">--:--</span> / <span id="videoDuration">--:--</span>
+	<br>
 	<a href="javascript:void(0);" onclick="seekToRelative(-30);">&lt;&lt;</a>  
 	<a href="javascript:void(0);" onclick="seekToRelative(-5);">&lt;</a>  
         <a href="javascript:void(0);" onclick="playVideo();">Play</a> | 
 	<a href="javascript:void(0);" onclick="pauseVideo();">Pause</a> 
 	<a href="javascript:void(0);" onclick="seekToRelative(5);">&gt;</a>
 	<a href="javascript:void(0);" onclick="seekToRelative(30);">&gt;&gt;</a>
-	<span id="playerState">--</span>
-        <span id="videoCurrentTime">--:--</span> / <span id="videoDuration">--:--</span>
-	<a href="javascript:void(0);" onclick="seekNextLyric(-1);">&lt;</a>  
-	<a href="javascript:void(0);" onclick="seekNextLyric(1);">&gt;</a>  
 	<br>
         Volume <input id="volumeSetting" type="text" size="3" /> 
         <a href="javascript:void(0);" onclick="muteVideo();">Mute</a> |

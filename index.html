@@ -259,6 +259,7 @@
         updateHTML("playerState", state);
       }
       var currentLyric = -1;
+      var playOnlyLyric = -1;
       function updateCurrentLyric() {
         if (ytplayer) {
 	  var curTime = ytplayer.getCurrentTime();
@@ -271,6 +272,10 @@
 	  }
           var lyric = i - 1;
 	  if (lyric != currentLyric) {
+	    if (playOnlyLyric >= 0 && lyric != playOnlyLyric) {
+	      pauseVideo();
+	      return;
+	    }	    
 	    var ly = lyrics[lyric];
 	    document.getElementById('l'+lyric).style.backgroundColor = "yellow";
 	    document.getElementById('l'+lyric).style.borderColor = "black";
@@ -282,8 +287,8 @@
 	      document.getElementById('l'+currentLyric).style.backgroundColor = "white";
 	      document.getElementById('l'+currentLyric).style.borderColor = "white";
             }
-            currentLyric = lyric;
-          }
+	    currentLyric = lyric;
+	  }	  
         }
       }
       function updatePlayerInfo() {
@@ -326,9 +331,24 @@
           ytplayer.unMute();
         }
       }
+      function playLyric(lyricNumber, playOnly) {
+	if (playOnly) {
+	  playOnlyLyric = lyricNumber;
+	} else {
+	  playOnlyLyric = -1;
+	}
+	seekTo(lyrics[lyricNumber].startSec, true);
+      }
+      var togglePlaying = false;
       function seekTo(seconds, allowSeekAhead) {
         if (ytplayer) {
-          ytplayer.seekTo(seconds, allowSeekAhead);
+	  ytplayer.seekTo(seconds, allowSeekAhead);
+	  if (togglePlaying) {
+	    pauseVideo();
+	  } else {
+	    playVideo();
+	  }
+	  //togglePlaying = !togglePlaying;
         }
       }
       function seekToRelative(seconds) {
@@ -369,7 +389,8 @@
 	  var ly = lyrics[i];
 	  ly.startSec = ly.start.time2Seconds()
           html += '<div class="lyric"><span class="label" id="l' + i + '">' + ly.label+ '</span> ';
-          html += '<a href="javascript:void(0);" onclick="seekTo(' + ly.startSec + ', true);" title="' + ly.start + '">Go</a> ';
+          html += '<a href="javascript:void(0);" onclick="playLyric(' + i + ', false);" title="' + ly.start + '">Go</a> ';
+          html += '<a href="javascript:void(0);" onclick="playLyric(' + i + ', true);" title="' + ly.start + '">Go1</a> ';
 	}
         html += '</div>';
         return html;	

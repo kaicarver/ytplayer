@@ -7,17 +7,18 @@
       body { font-family: Arial; }
       a { text-decoration: none; }
       #videoDiv { margin-right: 3px; }
-      #lyrics { margin-left: 3px; font-size: 80%; }
+      #lyrics { margin-left: 3px; font-size: 80%;  }
       #volumeSetting { width: 25px; }
-      .lyric { background-color: white; margin: 0px; padding: 2px; }
-      .label { border-style: solid; border-width: 1px; border-color: white; padding: 2px; }
+      .lyric { background-color: white; margin: 0px; padding: 0px; }
+      .lyric .hanzi { border-style: solid; border-width: 1px; border-color: white; padding: 2px; }
       #currentLyric { font-size: 120%; height: 4em; text-align: center; }
       #currentLyric .hanzi { font-size: 130%; }
       #currentLyric .pinyin { font-size: 75%; }
-      #currentLyric .english { font-size: 70%; font-style: italic; font-family: Times; }
+      #currentLyric .translation { font-size: 70%; font-style: italic; font-family: Times; }
       #controls { text-align: center; }
       #dashboard { background-color: white; overflow: auto; }
-      #col0 { display:block; float:left; width: 500px; height: 55em; background-color: white; }
+      #col0 { display:block; float:left; width: 500px; height: 65em; background-color: white; }
+      .pinyinBlock, .translationBlock { page-break-before: page; }
     </style>
     <script src="http://www.google.com/jsapi" type="text/javascript"></script>
     <script type="text/javascript">
@@ -27,198 +28,202 @@
     </script>
     <script type="text/javascript">
       var lyrics = [
-	{ start: "00:00:04", finish: "00:00:00",
-	  label: "[Intro]",
-	  pinyin: "",
-	  translation: "" },	  	
-        { start: "00:00:26", finish: "00:00:00",
-	  label: "[First verse]",
-	  pinyin: "",
-	  translation: "" },
-	{ start: "00:00:27", finish: "00:00:00",
-	  label: "對這個世界如果你有太多的抱怨",
+	{ start: "00:00:00",
+	  hanzi: "稻香 - 周杰倫",
+	  pinyin: "Dào Xiāng - Zhōu Jiélún",
+	  translation: "Fragrance of Rice - Jay Chou" },
+	{ start: "00:00:04",
+	  hanzi: "[Intro]",
+	  pinyin: "[Intro]",
+	  translation: "[Intro]" },
+        { start: "00:00:26",
+	  hanzi: "[First verse]",
+	  pinyin: "[First verse]",
+	  translation: "[First verse]" },
+	{ start: "00:00:27",
+	  hanzi: "對這個世界如果你有太多的抱怨",
 	  pinyin: "duì zhège shìjiè rúguǒ nǐ yǒu tài duō de bàoyuàn",
 	  translation: "If you have too many complaints towards this world" },
-	{ start: "00:00:31", finish: "00:00:00",
-	  label: "跌倒了就不敢繼續往前走",
+	{ start: "00:00:31",
+	  hanzi: "跌倒了就不敢繼續往前走",
 	  pinyin: "diēdǎo le jiù bùgǎn jìxù wǎngqián zǒu",
 	  translation: "When you fall down you don't dare to continue walking forward" },
-	{ start: "00:00:34", finish: "00:00:00",
-	  label: "為什麼人要這麼的脆弱墮落",
+	{ start: "00:00:34",
+	  hanzi: "為什麼人要這麼的脆弱墮落",
 	  pinyin: "wèishénme rén yāo zhème de cuìruò duòluò ",
-	  translation: "Why must people be so weak, depraved" },	  
-	{ start: "00:00:38", finish: "00:00:00",
-	  label: "請你打開電視看看",
+	  translation: "Why must people be so weak, depraved" },
+	{ start: "00:00:38",
+	  hanzi: "請你打開電視看看",
 	  pinyin: "qǐng nǐ dǎkāi diànshì kànkan",
-	  translation: "I ask you to turn on the TV and see" },	  
-	{ start: "00:00:40", finish: "00:00:00",
-	  label: "多少人為生命在努力勇敢的走下去",
+	  translation: "I ask you to turn on the TV and see" },
+	{ start: "00:00:40",
+	  hanzi: "多少人為生命在努力勇敢的走下去",
 	  pinyin: "duōshǎo rén wéishēngmìng zài nǔlì yǒnggǎn de zǒu xiàqù",
-	  translation: "How many people bravely do their best to continue walking for life" },	  
-	{ start: "00:00:44", finish: "00:00:00",
-	  label: "我們是不是該知足",
+	  translation: "How many people bravely do their best to continue walking for life" },
+	{ start: "00:00:44",
+	  hanzi: "我們是不是該知足",
 	  pinyin: "wǒmen shìbùshì gāi zhīzú",
-	  translation: "Shouldn't we be content with what we have?" },	  
-	{ start: "00:00:46", finish: "00:00:00",
-	  label: "珍惜一切就算沒有擁有",
-	  pinyin: "zhēnxī yīqiè jiùsuàn méiyǒu yōngyǒu",
-	  translation: "You should cherish everything even if you don't possess it" },	  
-	{ start: "00:00:50", finish: "00:00:00",
-	  label: "[Chorus]",
-	  pinyin: "",
-	  translation: "" },	  
-	{ start: "00:00:50.5", finish: "00:00:00",
-	  label: "還記得你說家是唯一的城堡",
-	  pinyin: "hái jìde nǐ shuō jiā shì wéiyī de chéngbǎo",
-	  translation: "I still remember you said your home was the only castle," },	  
-	{ start: "00:00:54", finish: "00:00:00",
-	  label: "隨著稻香河流繼續奔跑",
-	  pinyin: "suízhe dào xiāng héliú jìxù bēnpǎo",
-	  translation: "you continue to run along with the fragrance of rice and the flowing river" },	  
-	{ start: "00:00:57", finish: "00:00:00",
-	  label: "微微笑小時候的夢我知道",
-	  pinyin: "wēiwēi xiào xiǎoshíhou de mèng wǒ zhīdào",
-	  translation: "Smiling, the dreams when you were young, I know" },	  
-	{ start: "00:01:02", finish: "00:00:00",
-	  label: "不要哭讓螢火蟲帶著你逃跑",
-	  pinyin: "bùyào kū ràng yínghuǒchóng dài zhāo nǐ táopǎo",
-	  translation: "Don't cry, let the fireflies lead you to escape," },	  
-	{ start: "00:01:06", finish: "00:00:00",
-	  label: "鄉間的歌謠永遠的依靠",
-	  pinyin: "xiāngjiān de gēyáo yǒngyuǎn de yīkào",
-	  translation: "folk songs in the country, you can always rely on them" },	  
-	{ start: "00:01:09", finish: "00:00:00",
-	  label: "回家吧回到最初的美好",
-	  pinyin: "huíjiā bā huídào zuìchū de měihǎo",
-	  translation: "Just go home, go back to the happiness at the very start" },
-	{ start: "00:01:15", finish: "00:00:00",
-	  label: "[Instrumental]",
-	  pinyin: "",
-	  translation: "" },	  	
-	{ start: "00:01:37", finish: "00:00:00",
-	  label: "[Second verse]",
-	  pinyin: "",
-	  translation: "" },
-	{ start: "00:01:37.5", finish: "00:00:00",
-	  label: "不要這麼容易就想放棄就像我說的",
-	  pinyin: "bùyào zhème róngyì jiù xiǎng fàngqì jiù xiàng wǒ shuō de",
-	  translation: "Don't be so easy to give up, it's just like I say" },	  
-	{ start: "00:01:41.3", finish: "00:00:00",
-	  label: "追不到的夢想換個夢不就得了",
-	  pinyin: "zhuī bùdào de mèngxiǎng huàn gě mèng bù jiù déle",
-	  translation: "For dreams you can't achieve, switch it for another and it'll be fine" },	  
-	{ start: "00:01:44.5", finish: "00:00:00",
-	  label: "為自己的人生鮮艷上色",
-	  pinyin: "wéi zìjǐ de rénshēng xiānyàn shàngsè",
-	  translation: "Put some colour into your life," },
-	{ start: "00:01:46.5", finish: "00:00:00",
-	  label: "先把愛塗上喜歡的顏色",
-	  pinyin: "xiān bǎ ài tú shǎng xǐhuan de yánsè",
-	  translation: "firstly paint the colour you like on love" },
-	{ start: "00:01:49.5", finish: "00:00:00",
-	  label: "笑一個吧功成名就不是目的",
-	  pinyin: "xiào yīgè bā gōngchéngmíngjiù búshi mùdì",
-	  translation: "Come on and smile, merit and fame aren't the goals" },
-	{ start: "00:01:52.3", finish: "00:00:00",
-	  label: "讓自己快樂快樂這才叫做意義",
-	  pinyin: "ràng zìjǐ kuàilè kuàilè zhè cái jiàozuò yìyì",
-	  translation: "Let yourself be happy, this is what you call meaning" },	  
-	{ start: "00:01:55.3", finish: "00:00:00",
-	  label: "童年的紙飛機現在終於飛回我手裡",
-	  pinyin: "tóngnián de zhǐ fēijī xiànzài zhōngyú fēi huí wǒ shǒulǐ",
-	  translation: "The paper airplane from my childhood, it's finally flown back to my hand now" },	  
-	{ start: "00:02:00", finish: "00:00:00",
-	  label: "所謂的那快樂",
-	  pinyin: "suǒwèi de nā kuàilè",
-	  translation: "That so called happiness," },	  
-	{ start: "00:02:02.3", finish: "00:00:00",
-	  label: "赤腳在田裡追蜻蜓追到累了",
-	  pinyin: "chìjiǎo zài tiánlǐduī qīngtíng duī dào léi le",
-	  translation: "running barefoot in the fields chasing dragonflies and getting tired" },	  
-	{ start: "00:02:05", finish: "00:00:00",
-	  label: "偷摘水果被蜜蜂給叮到怕了",
-	  pinyin: "tōu zhāi shuǐguǒ bèi mìfēng gěi dīng dào pà le",
-	  translation: "Picking fruits without permission and getting scared from being stung by bees," },
-	{ start: "00:02:08", finish: "00:00:00",
-	  label: "誰在偷笑呢",
-	  pinyin: "shéi zài tōu xiào ne",
-	  translation: "who's sniggering?" },
-	{ start: "00:02:10", finish: "00:00:00",
-	  label: "我靠著稻草人吹著風唱著歌睡著了",
-	  pinyin: "wǒ kào zhāo dàocǎorén chuī zhāo fēng chàng zhāo gē shuìzháo le",
-	  translation: "I lean on the scarecrow while being blown by the wind while singing while sleeping" },	  
-	{ start: "00:02:13", finish: "00:00:00",
-	  label: "哦哦午後吉它在蟲鳴中更清脆",
-	  pinyin: "é é wǔhòu jítā zài chóng míng zhōng gēng qīngcuì",
-	  translation: "Oh oh, in the afternoon the sound of the guitar is clearer among the buzzing of bugs" },	  
-	{ start: "00:02:16", finish: "00:00:00",
-	  label: "哦哦陽光灑在路上就不怕心碎",
-	  pinyin: "é é yángguāng sǎ zài lùshang jiù bùpà xīnsuì",
-	  translation: "Oh oh, if the sunshine sprinkles on the road then I won't be afraid of being broken-hearted" },	  
-	{ start: "00:02:20", finish: "00:00:00",
-	  label: "珍惜一切就算沒有擁有",
+	  translation: "Shouldn't we be content with what we have?" },
+	{ start: "00:00:46",
+	  hanzi: "珍惜一切就算沒有擁有",
 	  pinyin: "zhēnxī yīqiè jiùsuàn méiyǒu yōngyǒu",
 	  translation: "You should cherish everything even if you don't possess it" },
-	{ start: "00:02:24", finish: "00:00:00",
-	  label: "[Chorus 2]",
-	  pinyin: "",
-	  translation: "" },	  
-	{ start: "00:02:24.5", finish: "00:00:00",
-	  label: "還記得你說家是唯一的城堡",
+	{ start: "00:00:50",
+	  hanzi: "[Chorus]",
+	  pinyin: "[Chorus]",
+	  translation: "[Chorus]" },
+	{ start: "00:00:50.5",
+	  hanzi: "還記得你說家是唯一的城堡",
 	  pinyin: "hái jìde nǐ shuō jiā shì wéiyī de chéngbǎo",
-	  translation: "I still remember you said your home was the only castle," },	  
-	{ start: "00:02:28", finish: "00:00:00",
-	  label: "隨著稻香河流繼續奔跑",
+	  translation: "I still remember you said your home was the only castle," },
+	{ start: "00:00:54",
+	  hanzi: "隨著稻香河流繼續奔跑",
 	  pinyin: "suízhe dào xiāng héliú jìxù bēnpǎo",
-	  translation: "you continue to run along with the fragrance of rice and the flowing river" },	  
-	{ start: "00:02:31", finish: "00:00:00",
-	  label: "微微笑小時候的夢我知道",
+	  translation: "you continue to run along with the fragrance of rice and the flowing river" },
+	{ start: "00:00:57",
+	  hanzi: "微微笑小時候的夢我知道",
 	  pinyin: "wēiwēi xiào xiǎoshíhou de mèng wǒ zhīdào",
-	  translation: "Smiling, the dreams when you were young, I know" },	  
-	{ start: "00:02:36", finish: "00:00:00",
-	  label: "不要哭讓螢火蟲帶著你逃跑",
-	  pinyin: "bùyào kū ràng yínghuǒchóng dài zhāo nǐ táopǎo",
-	  translation: "Don't cry, let the fireflies lead you to escape," },	  
-	{ start: "00:02:39.7", finish: "00:00:00",
-	  label: "鄉間的歌謠永遠的依靠",
+	  translation: "Smiling, the dreams when you were young, I know" },
+	{ start: "00:01:02",
+	  hanzi: "不要哭讓螢火蟲帶著你逃跑",
+	  pinyin: "bùyào kū ràng yínghuǒchóng dàizhe nǐ táopǎo",
+	  translation: "Don't cry, let the fireflies lead you to escape," },
+	{ start: "00:01:06",
+	  hanzi: "鄉間的歌謠永遠的依靠",
 	  pinyin: "xiāngjiān de gēyáo yǒngyuǎn de yīkào",
-	  translation: "folk songs in the country, you can always rely on them" },	  
-	{ start: "00:02:42.7", finish: "00:00:00",
-	  label: "回家吧回到最初的美好",
-	  pinyin: "huíjiā bā huídào zuìchū de měihǎo",
-	  translation: "Just go home, go back to the happiness at the very start" },	  
-	{ start: "00:02:47.5", finish: "00:00:00",
-	  label: "[Chorus 3]",
-	  pinyin: "",
-	  translation: "" },	  
-	{ start: "00:02:47.8", finish: "00:00:00",
-	  label: "還記得你說家是唯一的城堡",
-	  pinyin: "hái jìde nǐ shuō jiā shì wéiyī de chéngbǎo",
-	  translation: "I still remember you said your home was the only castle," },	  
-	{ start: "00:02:51.3", finish: "00:00:00",
-	  label: "隨著稻香河流繼續奔跑",
-	  pinyin: "suízhe dào xiāng héliú jìxù bēnpǎo",
-	  translation: "you continue to run along with the fragrance of rice and the flowing river" },	  
-	{ start: "00:02:54", finish: "00:00:00",
-	  label: "微微笑小時候的夢我知道",
-	  pinyin: "wēiwēi xiào xiǎoshíhou de mèng wǒ zhīdào",
-	  translation: "Smiling, the dreams when you were young, I know" },	  
-	{ start: "00:02:59", finish: "00:00:00",
-	  label: "不要哭讓螢火蟲帶著你逃跑",
-	  pinyin: "bùyào kū ràng yínghuǒchóng dài zhāo nǐ táopǎo",
-	  translation: "Don't cry, let the fireflies lead you to escape," },	  
-	{ start: "00:03:03", finish: "00:00:00",
-	  label: "鄉間的歌謠永遠的依靠",
-	  pinyin: "xiāngjiān de gēyáo yǒngyuǎn de yīkào",
-	  translation: "folk songs in the country, you can always rely on them" },	  
-	{ start: "00:03:06", finish: "00:00:00",
-	  label: "回家吧回到最初的美好",
+	  translation: "folk songs in the country, you can always rely on them" },
+	{ start: "00:01:09",
+	  hanzi: "回家吧回到最初的美好",
 	  pinyin: "huíjiā bā huídào zuìchū de měihǎo",
 	  translation: "Just go home, go back to the happiness at the very start" },
-	{ start: "00:03:12", finish: "00:00:00",
-	  label: "[Instrumental]",
-	  pinyin: "",
-	  translation: "" }	
+	{ start: "00:01:15",
+	  hanzi: "[Instrumental]",
+	  pinyin: "[Instrumental]",
+	  translation: "[Instrumental]" },
+	{ start: "00:01:37",
+	  hanzi: "[Second verse]",
+	  pinyin: "[Second verse]",
+	  translation: "[Second verse]" },
+	{ start: "00:01:37.5",
+	  hanzi: "不要這麼容易就想放棄就像我說的",
+	  pinyin: "bùyào zhème róngyì jiù xiǎng fàngqì jiù xiàng wǒ shuō de",
+	  translation: "Don't be so easy to give up, it's just like I say" },
+	{ start: "00:01:41.3",
+	  hanzi: "追不到的夢想換個夢不就得了",
+	  pinyin: "zhuī bùdào de mèngxiǎng huàn gě mèng bù jiù déle",
+	  translation: "For dreams you can't achieve, switch it for another and it'll be fine" },
+	{ start: "00:01:44.5",
+	  hanzi: "為自己的人生鮮艷上色",
+	  pinyin: "wéi zìjǐ de rénshēng xiānyàn shàngsè",
+	  translation: "Put some colour into your life," },
+	{ start: "00:01:46.5",
+	  hanzi: "先把愛塗上喜歡的顏色",
+	  pinyin: "xiān bǎ ài tú shǎng xǐhuan de yánsè",
+	  translation: "firstly paint the colour you like on love" },
+	{ start: "00:01:49.5",
+	  hanzi: "笑一個吧功成名就不是目的",
+	  pinyin: "xiào yīgè bā gōngchéngmíngjiù búshi mùdì",
+	  translation: "Come on and smile, merit and fame aren't the goals" },
+	{ start: "00:01:52.3",
+	  hanzi: "讓自己快樂快樂這才叫做意義",
+	  pinyin: "ràng zìjǐ kuàilè kuàilè zhè cái jiàozuò yìyì",
+	  translation: "Let yourself be happy, this is what you call meaning" },
+	{ start: "00:01:55.3",
+	  hanzi: "童年的紙飛機現在終於飛回我手裡",
+	  pinyin: "tóngnián de zhǐ fēijī xiànzài zhōngyú fēi huí wǒ shǒulǐ",
+	  translation: "The paper airplane from my childhood, it's finally flown back to my hand now" },
+	{ start: "00:02:00",
+	  hanzi: "所謂的那快樂",
+	  pinyin: "suǒwèi de nā kuàilè",
+	  translation: "That so called happiness," },
+	{ start: "00:02:02.3",
+	  hanzi: "赤腳在田裡追蜻蜓追到累了",
+	  pinyin: "chìjiǎo zài tiánlǐduī qīngtíng duī dào léi le",
+	  translation: "running barefoot in the fields chasing dragonflies and getting tired" },
+	{ start: "00:02:05",
+	  hanzi: "偷摘水果被蜜蜂給叮到怕了",
+	  pinyin: "tōu zhāi shuǐguǒ bèi mìfēng gěi dīng dào pà le",
+	  translation: "Picking fruits without permission and getting scared from being stung by bees," },
+	{ start: "00:02:08",
+	  hanzi: "誰在偷笑呢",
+	  pinyin: "shéi zài tōu xiào ne",
+	  translation: "who's sniggering?" },
+	{ start: "00:02:10",
+	  hanzi: "我靠著稻草人吹著風唱著歌睡著了",
+	  pinyin: "wǒ kào zhāo dàocǎorén chuī zhāo fēng chàng zhāo gē shuìzháo le",
+	  translation: "I lean on the scarecrow while being blown by the wind while singing while sleeping" },
+	{ start: "00:02:13",
+	  hanzi: "哦哦午後吉它在蟲鳴中更清脆",
+	  pinyin: "é é wǔhòu jítā zài chóng míng zhōng gēng qīngcuì",
+	  translation: "Oh oh, in the afternoon the sound of the guitar is clearer among the buzzing of bugs" },
+	{ start: "00:02:16",
+	  hanzi: "哦哦陽光灑在路上就不怕心碎",
+	  pinyin: "é é yángguāng sǎ zài lùshang jiù bùpà xīnsuì",
+	  translation: "Oh oh, if the sunshine sprinkles on the road then I won't be afraid of being broken-hearted" },
+	{ start: "00:02:20",
+	  hanzi: "珍惜一切就算沒有擁有",
+	  pinyin: "zhēnxī yīqiè jiùsuàn méiyǒu yōngyǒu",
+	  translation: "You should cherish everything even if you don't possess it" },
+	{ start: "00:02:24",
+	  hanzi: "[Chorus 2]",
+	  pinyin: "[Chorus 2]",
+	  translation: "[Chorus 2]" },
+	{ start: "00:02:24.5",
+	  hanzi: "還記得你說家是唯一的城堡",
+	  pinyin: "hái jìde nǐ shuō jiā shì wéiyī de chéngbǎo",
+	  translation: "I still remember you said your home was the only castle," },
+	{ start: "00:02:28",
+	  hanzi: "隨著稻香河流繼續奔跑",
+	  pinyin: "suízhe dào xiāng héliú jìxù bēnpǎo",
+	  translation: "you continue to run along with the fragrance of rice and the flowing river" },
+	{ start: "00:02:31",
+	  hanzi: "微微笑小時候的夢我知道",
+	  pinyin: "wēiwēi xiào xiǎoshíhou de mèng wǒ zhīdào",
+	  translation: "Smiling, the dreams when you were young, I know" },
+	{ start: "00:02:36",
+	  hanzi: "不要哭讓螢火蟲帶著你逃跑",
+	  pinyin: "bùyào kū ràng yínghuǒchóng dàizhe nǐ táopǎo",
+	  translation: "Don't cry, let the fireflies lead you to escape," },
+	{ start: "00:02:39.7",
+	  hanzi: "鄉間的歌謠永遠的依靠",
+	  pinyin: "xiāngjiān de gēyáo yǒngyuǎn de yīkào",
+	  translation: "folk songs in the country, you can always rely on them" },
+	{ start: "00:02:42.7",
+	  hanzi: "回家吧回到最初的美好",
+	  pinyin: "huíjiā bā huídào zuìchū de měihǎo",
+	  translation: "Just go home, go back to the happiness at the very start" },
+	{ start: "00:02:47.5",
+	  hanzi: "[Chorus 3]",
+	  pinyin: "[Chorus 3]",
+	  translation: "[Chorus 3]" },
+	{ start: "00:02:47.8",
+	  hanzi: "還記得你說家是唯一的城堡",
+	  pinyin: "hái jìde nǐ shuō jiā shì wéiyī de chéngbǎo",
+	  translation: "I still remember you said your home was the only castle," },
+	{ start: "00:02:51.3",
+	  hanzi: "隨著稻香河流繼續奔跑",
+	  pinyin: "suízhe dào xiāng héliú jìxù bēnpǎo",
+	  translation: "you continue to run along with the fragrance of rice and the flowing river" },
+	{ start: "00:02:54",
+	  hanzi: "微微笑小時候的夢我知道",
+	  pinyin: "wēiwēi xiào xiǎoshíhou de mèng wǒ zhīdào",
+	  translation: "Smiling, the dreams when you were young, I know" },
+	{ start: "00:02:59",
+	  hanzi: "不要哭讓螢火蟲帶著你逃跑",
+	  pinyin: "bùyào kū ràng yínghuǒchóng dàizhe nǐ táopǎo",
+	  translation: "Don't cry, let the fireflies lead you to escape," },
+	{ start: "00:03:03",
+	  hanzi: "鄉間的歌謠永遠的依靠",
+	  pinyin: "xiāngjiān de gēyáo yǒngyuǎn de yīkào",
+	  translation: "folk songs in the country, you can always rely on them" },
+	{ start: "00:03:06",
+	  hanzi: "回家吧回到最初的美好",
+	  pinyin: "huíjiā bā huídào zuìchū de měihǎo",
+	  translation: "Just go home, go back to the happiness at the very start" },
+	{ start: "00:03:12",
+	  hanzi: "[Instrumental]",
+	  pinyin: "[Instrumental]",
+	  translation: "[Instrumental]" }
       ];
       
       String.prototype.seconds2Time = function () {
@@ -278,18 +283,19 @@
 	      return;
 	    }	    
 	    var ly = lyrics[lyric];
-	    document.getElementById('l'+lyric).style.backgroundColor = "yellow";
+	    //document.getElementById('l'+lyric).style.backgroundColor = "yellow";
 	    document.getElementById('l'+lyric).style.borderColor = "black";
+	    //document.getElementById('l'+lyric).scrollIntoView(false); // does not work well
 	    document.getElementById('currentLyric').innerHTML =
-	      '<div class="hanzi">' + ly.label + '</div>' +
+	      '<div class="hanzi">' + ly.hanzi + '</div>' +
 	      '<div class="pinyin">' + ly.pinyin + '</div>' +
-	      '<div class="english">' + ly.translation + '</div>';
+	      '<div class="translation">' + ly.translation + '</div>';
             if (currentLyric >= 0) {
 	      document.getElementById('l'+currentLyric).style.backgroundColor = "white";
 	      document.getElementById('l'+currentLyric).style.borderColor = "white";
             }
 	    currentLyric = lyric;
-	  }	  
+	  }
         }
       }
       function updatePlayerInfo() {
@@ -382,12 +388,30 @@
 	for (var i = 0; i < lyrics.length; i++) {
 	  var ly = lyrics[i];
 	  ly.startSec = ly.start.time2Seconds()
-          html += '<div class="lyric"><span class="label" id="l' + i + '">' + ly.label+ '</span> ';
-          html += '<a href="javascript:void(0);" onclick="playLyric(' + i + ', false);" title="' + ly.start + '">Go</a> ';
-          html += '<a href="javascript:void(0);" onclick="playLyric(' + i + ', true);" title="' + ly.start + '">Go1</a> ';
+          html += '<div class="lyric"><span class="hanzi" id="l' + i + '" onclick="playLyric(' + i + ', true);" title="' + ly.start + '">' + ly.hanzi+ '</span> ';
+          html += '<a href="javascript:void(0);" onclick="playLyric(' + i + ', false);" title="' + ly.start + '">&#9654;</a></div>';
 	}
         html += '</div>';
         return html;	
+      }
+      function printLyrics() {
+        var hanzi = '<div class="hanziBlock">';
+        var pinyin = '<div class="pinyinBlock">';
+        var translation = '<div class="translationBlock">';
+	for (var i = 0; i < lyrics.length; i++) {
+	  var ly = lyrics[i];
+	  ly.startSec = ly.start.time2Seconds()
+          hanzi += '<div class="lyric"><span class="hanzi" id="l' + i + '">' + ly.hanzi + '</span></div>';
+          pinyin += '<div class="lyric"><span class="pinyin" id="l' + i + '">' + ly.pinyin + '</span></div>';
+          translation += '<div class="lyric"><span class="translation" id="l' + i + '">' + ly.translation + '</span></div>';
+	}
+	hanzi += '</div>';
+	pinyin += '</div>';
+	translation += '</div>';
+	var w = window.open("about:blank","");
+	w.document.body.innerHTML = '<style>div > div:first-of-type { font-weight: bold; font-size: 1.5em; padding-bottom: 0.5em; } .hanziBlock { font-size: 2em; } .pinyinBlock, .translationBlock { display: block; page-break-before: always; }</style>' +
+	  hanzi + '<div class="page-break"></div>' + pinyin + '<div class="page-break"></div>' + translation;
+	w.print();
       }
       // The "main method" of this sample. Called when someone clicks "Run".
       function loadPlayer() {
@@ -442,6 +466,9 @@
         Volume <input id="volumeSetting" type="text" size="3" /> 
         <a href="javascript:void(0);" onclick="muteVideo();">Mute</a> |
         <a href="javascript:void(0);" onclick="unMuteVideo();">Unmute</a>
+	<div>
+	  <button onclick="printLyrics()">Print Lyrics</button>
+	</div>
       </div>
     </div>
     <div id="lyrics">...</div>

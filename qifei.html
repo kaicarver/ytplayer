@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <title>Qifei</title>
+    <style type="text/css">
+      body { font-family: Arial; }
+      a { text-decoration: none; }
+      #videoDiv { margin-right: 3px; }
+      #lyrics { margin-left: 3px; font-size: 80%;  }
+      #volumeSetting { width: 25px; }
+      .lyric { background-color: white; margin: 0px; padding: 0px; }
+      .lyric .hanzi { border-style: solid; border-width: 1px; border-color: white; padding: 2px; }
+      #currentLyric { font-size: 120%; height: 4em; text-align: center; }
+      #currentLyric .hanzi { font-size: 130%; }
+      #currentLyric .pinyin { font-size: 75%; }
+      #currentLyric .translation { font-size: 70%; font-style: italic; font-family: Times; }
+      #controls { text-align: center; }
+      #dashboard { background-color: white; overflow: auto; }
+      #col0 { display:block; float:left; width: 500px; height: 65em; background-color: white; }
+      .pinyinBlock, .translationBlock { page-break-before: page; }
+      .credits { font-style: italic; font-size: 0.7em; "; }
+    </style>
+    <script src="//www.google.com/jsapi" type="text/javascript"></script>
+    <script type="text/javascript">
+      // YouTube JavaScript Player
+      // https://developers.google.com/youtube/js_api_reference
+      google.load("swfobject", "2.1");
+    </script>
+    <script type="text/javascript">
+      var lyrics = [
+	{ start: "00:00:00",
+	  hanzi: "起飛",
+	  pinyin: "Qǐfēi",
+	  translation: "'Take off'" },
+	{ start: "00:00:15",
+	  hanzi: "（作詞 作曲 小組 、製作 陳建瑋）",
+	  pinyin: "(zuòcí zuòqǔ xiǎozǔ, zhìzuò Chén Jiànwěi)",
+	  translation: "(lyrics and music by a group, produced by Jacky Chen)" },
+	{ start: "00:00:27",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:00:30",
+	  hanzi: "等待風起 享受飛翔的澎湃",
+	  pinyin: "děngdài fēng qǐ xiǎngshòu fēixiáng de péngpài",
+	  translation: "Waiting for the wind to enjoy flying surging" },
+	{ start: "00:00:36",
+	  hanzi: "迫不及待探出頭來",
+	  pinyin: "pòbùjídài tàn chū tóu lái",
+	  translation: "I can not wait to head out" },
+	{ start: "00:00:40",
+	  hanzi: "想像俯瞰大地的痛快",
+	  pinyin: "xiǎngxiàng fǔkàn dàdì de tòngkuài",
+	  translation: "Imagine overlooking the happy earth" },
+	{ start: "00:00:43.4",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:00:43.5",
+	  hanzi: "時光倒轉 溫習曾經的對白",
+	  pinyin: "shíguāng dàozhuǎn wēnxí céngjīng de duìbái",
+	  translation: "Time reversal review once dialogue" },
+	{ start: "00:00:50",
+	  hanzi: "過去回憶一字排開",
+	  pinyin: "guòqù huíyì yī zì pái kāi",
+	  translation: "Lined up past memories" },
+	{ start: "00:00:53",
+	  hanzi: "相信明天一定更精彩",
+	  pinyin: "xiāngxìn míngtiān yīdìng gēng jīngcǎi",
+	  translation: "I believe that tomorrow will certainly be more exciting" },
+	{ start: "00:00:58",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:00:59",
+	  hanzi: "突然之間 吹來一陣勇氣",
+	  pinyin: "túrán zhī jiān chuī lái yīzhèn yǒngqì",
+	  translation: "A sudden gust of courage" },
+	{ start: "00:01:05.5",
+	  hanzi: "我要征服地心引力",
+	  pinyin: "wǒ yào zhēngfú dìxīn yǐnlì",
+	  translation: "I want to conquer gravity" },
+	{ start: "00:01:12.5",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:01:13",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:01:16.5",
+	  hanzi: "要飛出自己的故事",
+	  pinyin: "yào fēi chū zìjǐ de gùshì",
+	  translation: "To fly their own stories" },
+	{ start: "00:01:20.5",
+	  hanzi: "我的夢想 我的堅持",
+	  pinyin: "wǒ de mèngxiǎng wǒ de jiānchí",
+	  translation: "I stick my dreams" },
+	{ start: "00:01:23.5",
+	  hanzi: "風中的歌我要再唱一次",
+	  pinyin: "fēng zhōng de gē wǒ yào zài chàng yīcì",
+	  translation: "Wind song I want to sing again" },
+	{ start: "00:01:27",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:01:30.2",
+	  hanzi: "想駕馭雲海的放肆",
+	  pinyin: "xiǎng jiàyù yúnhǎi de fàngsì",
+	  translation: "I want to ride the clouds presumptuous" },
+	{ start: "00:01:33.5",
+	  hanzi: "昨天的淚 明日的傷",
+	  pinyin: "zuótiān de lèi míngrì de shāng",
+	  translation: "Yesterday's tears tomorrow injury" },
+	{ start: "00:01:37",
+	  hanzi: "彩虹就在前方",
+	  pinyin: "cǎihóng jiù zài qiánfāng",
+	  translation: "Rainbow in front" },
+	{ start: "00:01:39",
+	  hanzi: "冒險現在開始",
+	  pinyin: "màoxiǎn xiànzài kāishǐ",
+	  translation: "Adventure begins now" },
+	{ start: "00:01:43",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:01:44.5",
+	  hanzi: "堅強信念 熱血面對全世界",
+	  pinyin: "jiānqiáng xìnniàn rèxuè miàn duì quán shìjiè",
+	  translation: "Strong belief blood to face the world" },
+	{ start: "00:01:51",
+	  hanzi: "不論白天不論黑夜",
+	  pinyin: "bùlùn báitiān bùlùn hēiyè",
+	  translation: "Day and night regardless of whether" },
+	{ start: "00:01:54.5",
+	  hanzi: "不留遺憾的起飛向前",
+	  pinyin: "bù liú yíhàn de qǐfēi xiàng qián",
+	  translation: "Takeoff forward without regret" },
+	{ start: "00:01:57.7",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:01:58",
+	  hanzi: "如果有天 忘了夢想的情節",
+	  pinyin: "rúguǒ yǒu tiān wàngle mèngxiǎng de qíngjié",
+	  translation: "If you dream of one day forget the plot" },
+	{ start: "00:02:04.5",
+	  hanzi: "我會試著懷抱從前",
+	  pinyin: "wǒ huìshìzhe huáibào cóngqián",
+	  translation: "I'll try to embrace the past" },
+	{ start: "00:02:08",
+	  hanzi: "找回故事萌芽的起點",
+	  pinyin: "zhǎo huí gùshì méngyá de qǐdiǎn",
+	  translation: "Start sprouting back story" },
+	{ start: "00:02:12",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:02:13.2",
+	  hanzi: "突然之間 吹來一陣勇氣",
+	  pinyin: "túrán zhī jiān chuī lái yīzhèn yǒngqì",
+	  translation: "A sudden gust of courage" },
+	{ start: "00:02:20",
+	  hanzi: "我要征服地心引力",
+	  pinyin: "wǒ yào zhēngfú dìxīn yǐnlì",
+	  translation: "I want to conquer gravity" },
+	{ start: "00:02:27.5",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:02:28",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:02:31",
+	  hanzi: "要飛出自己的故事",
+	  pinyin: "yào fēi chū zìjǐ de gùshì",
+	  translation: "To fly their own stories" },
+	{ start: "00:02:34.5",
+	  hanzi: "我的夢想 我的堅持",
+	  pinyin: "wǒ de mèngxiǎng wǒ de jiānchí",
+	  translation: "I stick my dreams" },
+	{ start: "00:02:38",
+	  hanzi: "風中的歌我要再唱一次",
+	  pinyin: "fēng zhōng de gē wǒ yào zài chàng yīcì",
+	  translation: "Wind song I want to sing again" },
+	{ start: "00:02:41",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:02:45",
+	  hanzi: "想駕馭雲海的放肆",
+	  pinyin: "xiǎng jiàyù yúnhǎi de fàngsì",
+	  translation: "I want to ride the clouds presumptuous" },
+	{ start: "00:02:48",
+	  hanzi: "昨天的淚 明日的傷",
+	  pinyin: "zuótiān de lèi míngrì de shāng",
+	  translation: "Yesterday's tears tomorrow injury" },
+	{ start: "00:02:51",
+	  hanzi: "彩虹就在前方",
+	  pinyin: "cǎihóng jiù zài qiánfāng",
+	  translation: "Rainbow in front" },
+	{ start: "00:02:54",
+	  hanzi: "冒險現在開始",
+	  pinyin: "màoxiǎn xiànzài kāishǐ",
+	  translation: "Adventure begins now" },
+	{ start: "00:02:59",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:03:11",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:03:15",
+	  hanzi: "要飛出自己的故事",
+	  pinyin: "yào fēi chū zìjǐ de gùshì",
+	  translation: "To fly their own stories" },
+	{ start: "00:03:18",
+	  hanzi: "我的夢想 我的堅持",
+	  pinyin: "wǒ de mèngxiǎng wǒ de jiānchí",
+	  translation: "I stick my dreams" },
+	{ start: "00:03:22",
+	  hanzi: "風中的歌我要再唱一次",
+	  pinyin: "fēng zhōng de gē wǒ yào zài chàng yīcì",
+	  translation: "Wind song I want to sing again" },
+	{ start: "00:03:25",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:03:28.5",
+	  hanzi: "想駕馭雲海的放肆",
+	  pinyin: "xiǎng jiàyù yúnhǎi de fàngsì",
+	  translation: "I want to ride the clouds presumptuous" },
+	{ start: "00:03:32",
+	  hanzi: "昨天的淚 明日的傷",
+	  pinyin: "zuótiān de lèi míngrì de shāng",
+	  translation: "Yesterday's tears tomorrow injury" },
+	{ start: "00:03:35.5",
+	  hanzi: "彩虹就在前方",
+	  pinyin: "cǎihóng jiù zài qiánfāng",
+	  translation: "Rainbow in front" },
+	{ start: "00:03:38",
+	  hanzi: "冒險現在開始",
+	  pinyin: "màoxiǎn xiànzài kāishǐ",
+	  translation: "Adventure begins now" },
+	{ start: "00:03:41.5",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:03:42",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:03:45",
+	  hanzi: "要飛出自己的故事",
+	  pinyin: "yào fēi chū zìjǐ de gùshì",
+	  translation: "To fly their own stories" },
+	{ start: "00:03:49",
+	  hanzi: "我的夢想 我的堅持",
+	  pinyin: "wǒ de mèngxiǎng wǒ de jiānchí",
+	  translation: "I stick my dreams" },
+	{ start: "00:03:52",
+	  hanzi: "風中的歌我要再唱一次",
+	  pinyin: "fēng zhōng de gē wǒ yào zài chàng yīcì",
+	  translation: "Wind song I want to sing again" },
+	{ start: "00:03:55.5",
+	  hanzi: "我們是天空的孩子",
+	  pinyin: "wǒmen shì tiānkōng de háizi",
+	  translation: "We are the children of the sky" },
+	{ start: "00:03:59",
+	  hanzi: "想駕馭雲海的放肆",
+	  pinyin: "xiǎng jiàyù yúnhǎi de fàngsì",
+	  translation: "I want to ride the clouds presumptuous" },
+	{ start: "00:04:02.3",
+	  hanzi: "昨天的淚 明日的傷",
+	  pinyin: "zuótiān de lèi míngrì de shāng",
+	  translation: "Yesterday's tears tomorrow injury" },
+	{ start: "00:04:05.7",
+	  hanzi: "彩虹就在前方",
+	  pinyin: "cǎihóng jiù zài qiánfāng",
+	  translation: "Rainbow in front" },
+	{ start: "00:04:08",
+	  hanzi: "冒險現在開始",
+	  pinyin: "màoxiǎn xiànzài kāishǐ",
+	  translation: "Adventure begins now" },
+	{ start: "00:04:12",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" },
+	{ start: "00:04:12.5",
+	  hanzi: "昨天的淚 明日的傷",
+	  pinyin: "zuótiān de lèi míngrì de shāng",
+	  translation: "Yesterday's tears tomorrow injury" },
+	{ start: "00:04:16",
+	  hanzi: "彩虹就在前方",
+	  pinyin: "cǎihóng jiù zài qiánfāng",
+	  translation: "Rainbow in front" },
+	{ start: "00:04:18",
+	  hanzi: "冒險現在開始",
+	  pinyin: "màoxiǎn xiànzài kāishǐ",
+	  translation: "Adventure begins now" },
+	{ start: "00:04:27",
+	  hanzi: "",
+	  pinyin: "",
+	  translation: "" }
+      ];
+      
+      String.prototype.seconds2Time = function () {
+        var sec_num = parseInt(this, 10);
+	var hours   = Math.floor(sec_num / 3600);
+	var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+	var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+	if (hours   < 10) {hours   = "0"+hours;}
+	if (minutes < 10) {minutes = "0"+minutes;}
+	if (seconds < 10) {seconds = "0"+seconds;}
+	var time = hours+':'+minutes+':'+seconds;
+	return time;
+      }
+      String.prototype.time2Seconds = function () {
+          var a = this.split(':');
+	  return (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); 
+      }
+      function updateHTML(elmId, value) {
+        document.getElementById(elmId).innerHTML = value;
+      }
+      function updateHTMLfield(elmId, value) {
+        document.getElementById(elmId).value = value;
+      }
+      function onPlayerError(errorCode) {
+        alert("An error occured of type:" + errorCode);
+      }
+      function onPlayerStateChange(newState) {
+        var state = "";
+        switch (newState) {
+          case 1: state = "Playing"; break;
+          case 2: state = "Paused"; break;
+          case 3: state = "Buffering"; break;
+          case 0: state = "Ended"; break;
+          case 5: state = "Video cued"; break;
+          case -1: state = "--"; break; // "Unstarted"
+          default: state = "Player state: " + newState;
+        }
+        updateHTML("playerState", state);
+      }
+      var currentLyric = -1;
+      var playOnlyLyric = -1;
+      function updateCurrentLyric() {
+        if (ytplayer) {
+	  var curTime = ytplayer.getCurrentTime();
+	  // display which lyric is playing according to the time in seconds
+	  for (var i = 0; i < lyrics.length; i++) {
+	    var ly = lyrics[i];
+	    if (curTime < ly.startSec) {
+	      break;
+	    }
+	  }
+          var lyric = i - 1;
+	  if (lyric != currentLyric) {
+	    if (playOnlyLyric >= 0 && lyric != playOnlyLyric) {
+	      pauseVideo();
+	      return;
+	    }	    
+	    var ly = lyrics[lyric];
+	    //document.getElementById('l'+lyric).style.backgroundColor = "yellow";
+	    document.getElementById('l'+lyric).style.borderColor = "black";
+	    //document.getElementById('l'+lyric).scrollIntoView(false); // does not work well
+	    document.getElementById('currentLyric').innerHTML =
+	      '<div class="hanzi">' + ly.hanzi + '</div>' +
+	      '<div class="pinyin">' + ly.pinyin + '</div>' +
+	      '<div class="translation">' + ly.translation + '</div>';
+            if (currentLyric >= 0) {
+	      document.getElementById('l'+currentLyric).style.backgroundColor = "white";
+	      document.getElementById('l'+currentLyric).style.borderColor = "white";
+            }
+	    currentLyric = lyric;
+	  }
+        }
+      }
+      function updatePlayerInfo() {
+        // Also check that at least one function exists since when IE unloads the
+        // page, it will destroy the SWF before clearing the interval.
+        if(ytplayer && ytplayer.getDuration) {
+          updateHTML("videoDuration", (ytplayer.getDuration()+"").seconds2Time());
+          updateHTML("videoCurrentTime", ((Math.round(ytplayer.getCurrentTime()*10)/10)+"").seconds2Time());
+          if (document.activeElement.id != "volumeSetting")
+            updateHTMLfield("volumeSetting", Math.round(ytplayer.getVolume()));
+          updateCurrentLyric(ytplayer.getDuration());
+        }
+      }
+      function setVideoVolume() {
+        var volume = parseInt(document.getElementById("volumeSetting").value);
+        if(isNaN(volume) || volume < 0 || volume > 100) {
+          //alert("Please enter a valid volume between 0 and 100.");
+        }
+        else if(ytplayer){
+          ytplayer.setVolume(volume);
+        }
+      }
+      function playVideo() {
+	if (ytplayer) {
+	  playOnlyLyric = -1;
+	  ytplayer.playVideo();
+        }
+      }
+      function pauseVideo() {
+        if (ytplayer) {
+          ytplayer.pauseVideo();
+        }
+      }
+      function muteVideo() {
+        if(ytplayer) {
+          ytplayer.mute();
+        }
+      }      
+      function unMuteVideo() {
+        if(ytplayer) {
+          ytplayer.unMute();
+        }
+      }
+      function playLyric(lyricNumber, playOnly) {
+	if (playOnly) {
+	  playOnlyLyric = lyricNumber;
+	} else {
+	  playOnlyLyric = -1;
+	}
+	seekTo(lyrics[lyricNumber].startSec, true);
+      }
+      function seekTo(seconds, allowSeekAhead) {
+        if (ytplayer) {
+	  ytplayer.seekTo(seconds, allowSeekAhead);
+	  ytplayer.playVideo();
+        }
+      }
+      function seekToRelative(seconds) {
+        if (ytplayer) {
+          var cur = ytplayer.getCurrentTime();
+          cur = Math.max(cur + seconds, 0);
+          seekTo(cur, true);
+        }
+      }
+      function seekNextLyric(increment) {
+	var lyric = Math.max(0, Math.min(currentLyric + increment, lyrics.length - 1));
+	playLyric(lyric, true);
+      }
+      // The video to load. 
+      //var videoID = "OIiU2-JyqsE" 
+      //var videoID = "Ej5rGGTHy54" // WTC
+      //var videoID = "8IsrKKd5laI" // Jay Chou
+      var videoID = "AZzuZL-HK6Y" // Qifei
+
+      
+      // Standard API function is called by the player once it loads
+      // https://developers.google.com/youtube/js_api_reference
+      function onYouTubePlayerReady(playerId) {
+        ytplayer = document.getElementById("ytPlayer");
+        // This causes the updatePlayerInfo function to be called every 250ms to
+        // get fresh data from the player
+        setInterval(updatePlayerInfo, 250);
+        updatePlayerInfo();
+        ytplayer.addEventListener("onStateChange", "onPlayerStateChange");
+        ytplayer.addEventListener("onError", "onPlayerError");
+        ytplayer.cueVideoById(videoID);
+	ytplayer.setPlaybackQuality("hd720");
+      }
+      function lyricsHTML() {
+        var html = '<div>';
+	for (var i = 0; i < lyrics.length; i++) {
+	  var ly = lyrics[i];
+	  ly.startSec = ly.start.time2Seconds()
+          html += '<div class="lyric"><span class="hanzi" id="l' + i + '" onclick="playLyric(' + i + ', true);" title="' + ly.start + "\n" + ly.pinyin + "\n" + ly.translation + '">' + ly.hanzi+ '</span> ';
+          html += '<a href="javascript:void(0);" onclick="playLyric(' + i + ', false);" title="' + ly.start + '">&#9654;</a></div>';
+	}
+        html += '</div>';
+        return html;	
+      }
+      function printLyrics() {
+        var hanzi = '<div class="hanziBlock">';
+        var pinyin = '<div class="pinyinBlock">';
+        var translation = '<div class="translationBlock">';
+	for (var i = 0; i < lyrics.length; i++) {
+	  var ly = lyrics[i];
+	  ly.startSec = ly.start.time2Seconds()
+          hanzi += '<div class="lyric"><span class="hanzi" id="l' + i + '">' + ly.hanzi + '</span></div>';
+          pinyin += '<div class="lyric"><span class="pinyin" id="l' + i + '">' + ly.pinyin + '</span></div>';
+          translation += '<div class="lyric"><span class="translation" id="l' + i + '">' + ly.translation + '</span></div>';
+	}
+	hanzi += '</div>';
+	pinyin += '</div>';
+	translation += '</div>';
+	var w = window.open("about:blank","");
+	w.document.body.innerHTML = '<style>div > div:first-of-type { font-weight: bold; font-size: 1.5em; padding-bottom: 0.5em; } .hanziBlock { font-size: 2em; } .pinyinBlock, .translationBlock { display: block; page-break-before: always; }</style>' +
+	  hanzi + '<div class="page-break"></div>' + pinyin + '<div class="page-break"></div>' + translation;
+	w.print();
+      }
+      // The "main method" of this sample. Called when someone clicks "Run".
+      function loadPlayer() {
+        // Lets Flash from another domain call JavaScript
+        var params = { allowScriptAccess: "always" };
+        // The element id of the Flash embed
+        var atts = { id: "ytPlayer" };
+        // All of the magic handled by SWFObject (http://code.google.com/p/swfobject/)
+        swfobject.embedSWF(//"http://www.youtube.com/apiplayer?" + "version=3&enablejsapi=1&playerapiid=player1",
+		           "//www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1", 
+                           "videoDiv", "480", "295", "9", null, null, params, atts);
+        document.getElementById("volumeSetting").onkeyup = function(){ setVideoVolume() };
+        document.onkeydown = function() {
+	  console.log(window.event.keyCode);
+	  switch (window.event.keyCode) {
+	      case 37: seekNextLyric(-1); return false;; // ← Left key
+	      case 38: seekNextLyric(-1); return false;; // ↑ Up key
+	      case 13: seekNextLyric(0);  return false;; // ↵ Enter key
+	      case 39: seekNextLyric(1);  return false;; // → Right key
+	      case 40: seekNextLyric(1);  return false;; // ↓ Down key
+	  }
+	  return true;
+        }
+      }
+      function _run() {
+        loadPlayer();
+        document.getElementById("lyrics").innerHTML = lyricsHTML();
+      }
+      google.setOnLoadCallback(_run);
+    </script>
+  </head>
+  <body>
+  <div id="dashboard">
+    <div id="col0">
+      <div id="videoDiv">Loading...</div>
+      <div id="currentLyric">...</div>
+      <div id="controls">
+	<a href="javascript:void(0);" onclick="seekNextLyric(-1);" title="Previous lyric ←,↑">&lt;====</a>  
+	<a href="javascript:void(0);" onclick="seekNextLyric(0);" title="Repeat lyric ↵">======</a>  
+	<a href="javascript:void(0);" onclick="seekNextLyric(1);" title="Next lyric →,↓">====&gt;</a>  
+	<br>
+	<span id="playerState">--</span>
+        <span id="videoCurrentTime">--:--</span> / <span id="videoDuration">--:--</span>
+	<br>
+	<a href="javascript:void(0);" onclick="seekToRelative(-30);">&lt;&lt;</a>  
+	<a href="javascript:void(0);" onclick="seekToRelative(-5);">&lt;</a>  
+        <a href="javascript:void(0);" onclick="playVideo();">Play</a> | 
+	<a href="javascript:void(0);" onclick="pauseVideo();">Pause</a> 
+	<a href="javascript:void(0);" onclick="seekToRelative(5);">&gt;</a>
+	<a href="javascript:void(0);" onclick="seekToRelative(30);">&gt;&gt;</a>
+	<br>
+        Volume <input id="volumeSetting" type="text" size="3" /> 
+        <a href="javascript:void(0);" onclick="muteVideo();">Mute</a> |
+        <a href="javascript:void(0);" onclick="unMuteVideo();">Unmute</a>
+	<div>
+	  <button onclick="printLyrics()">Print Lyrics</button>
+	</div>
+	<div class="credits">
+	  Lyrics credit: <a href="http://jaychoustudio.com/jay-chou-translations/fragrance-of-rice/123/traditional">Jay Chou Studio</a>
+	  (pinyin with tones by me)
+	</div>
+      </div>
+    </div>
+    <div id="lyrics">...</div>
+  </div>
+  <pre>
+    TODO: Update to use iframe API
+    https://developers.google.com/youtube/iframe_api_reference
+    https://developers.google.com/youtube/youtube_player_demo
+  </pre>
+  </body>
+</html>

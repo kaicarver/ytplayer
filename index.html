@@ -21,7 +21,7 @@
       .pinyinBlock, .translationBlock { page-break-before: page; }
       .credits { font-style: italic; font-size: 0.7em; "; }
     </style>
-    <script src="http://www.google.com/jsapi" type="text/javascript"></script>
+    <script src="//www.google.com/jsapi" type="text/javascript"></script>
     <script type="text/javascript">
       // YouTube JavaScript Player
       // https://developers.google.com/youtube/js_api_reference
@@ -422,7 +422,7 @@
         var atts = { id: "ytPlayer" };
         // All of the magic handled by SWFObject (http://code.google.com/p/swfobject/)
         swfobject.embedSWF(//"http://www.youtube.com/apiplayer?" + "version=3&enablejsapi=1&playerapiid=player1",
-		           "http://www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1", 
+		           "//www.youtube.com/v/" + videoID + "?version=3&enablejsapi=1&playerapiid=player1", 
                            "videoDiv", "480", "295", "9", null, null, params, atts);
         document.getElementById("volumeSetting").onkeyup = function(){ setVideoVolume() };
         document.onkeydown = function() {

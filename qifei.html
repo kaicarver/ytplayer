@@ -13,7 +13,7 @@
       #volumeSetting { width: 25px; }
       .lyric { background-color: white; margin: 0px; padding: 0px; }
       .lyric .hanzi { border-style: solid; border-width: 1px; border-color: white; padding: 2px; }
-      #currentLyric { font-size: 120%; height: 4em; text-align: center; padding-top: 0.2em; }
+      #currentLyric { font-size: 120%; height: 3.5em; text-align: center; padding-top: 0.2em; }
       #currentLyric .hanzi { font-size: 130%; }
       #currentLyric .pinyin { font-size: 75%; }
       #currentLyric .translation { font-size: 70%; font-style: italic; font-family: Times; }
@@ -34,7 +34,7 @@
 	{ start: "00:00:00",
 	  hanzi: "起飛",
 	  pinyin: "Qǐfēi",
-	  translation: "'Take off'" },
+	  translation: "Ready to Fly" },
 	{ start: "00:00:15",
 	  hanzi: "（作詞 作曲 小組 、製作 陳建瑋）",
 	  pinyin: "(zuòcí zuòqǔ xiǎozǔ, zhìzuò Chén Jiànwěi)",
@@ -337,8 +337,8 @@
       function onPlayerStateChange(newState) {
         var state = "";
         switch (newState) {
-          case 1: state = "Playing"; break;
-          case 2: state = "Paused"; break;
+	  case 1: state = "Playing"; document.getElementById('playbutton').innerText = 'Pause'; break;
+          case 2: state = "Paused"; document.getElementById('playbutton').innerText = 'Play'; break;
           case 3: state = "Buffering"; break;
           case 0: state = "Ended"; break;
           case 5: state = "Video cued"; break;
@@ -403,8 +403,15 @@
       }
       function playVideo() {
 	if (ytplayer) {
-	  playOnlyLyric = -1;
-	  ytplayer.playVideo();
+	  var button = document.getElementById('playbutton');
+	  if (button.innerText == 'Play') {
+	    playOnlyLyric = -1;
+	    ytplayer.playVideo();
+	    button.innerText = 'Pause';
+	  } else {
+	    ytplayer.pauseVideo();
+	    button.innerText = 'Play';
+	  }
         }
       }
       function pauseVideo() {
@@ -521,6 +528,7 @@
 	      case 13: seekNextLyric(0);  return false;; // ↵ Enter key
 	      case 39: seekNextLyric(1);  return false;; // → Right key
 	      case 40: seekNextLyric(1);  return false;; // ↓ Down key
+	      case 32: playVideo();  return false;; // ↓ Space key
 	  }
 	  return true;
         }
@@ -539,19 +547,18 @@
       <div id="videoDiv">Loading...</div>
       <div id="currentLyric">...</div>
       <div id="controls">
+	<a href="javascript:void(0);" onclick="seekToRelative(-30);" title="go back 30 seconds">&lt;&lt;</a>  
+	<a href="javascript:void(0);" onclick="seekToRelative(-5);" title="go back 5 seconds">&lt;</a>  
+        <a href="javascript:void(0);" onclick="playVideo();" id="playbutton">Play</a>
+	<a href="javascript:void(0);" onclick="seekToRelative(5);" title="go forward 5 seconds">&gt;</a>
+	<a href="javascript:void(0);" onclick="seekToRelative(30);" title="go forward 30 seconds">&gt;&gt;</a>
+	<br>
 	<a href="javascript:void(0);" onclick="seekNextLyric(-1);" title="Previous lyric ←,↑">&lt;====</a>  
 	<a href="javascript:void(0);" onclick="seekNextLyric(0);" title="Repeat lyric ↵">======</a>  
 	<a href="javascript:void(0);" onclick="seekNextLyric(1);" title="Next lyric →,↓">====&gt;</a>  
 	<br>
 	<span id="playerState">--</span>
         <span id="videoCurrentTime">--:--</span> / <span id="videoDuration">--:--</span>
-	<br>
-	<a href="javascript:void(0);" onclick="seekToRelative(-30);">&lt;&lt;</a>  
-	<a href="javascript:void(0);" onclick="seekToRelative(-5);">&lt;</a>  
-        <a href="javascript:void(0);" onclick="playVideo();">Play</a> | 
-	<a href="javascript:void(0);" onclick="pauseVideo();">Pause</a> 
-	<a href="javascript:void(0);" onclick="seekToRelative(5);">&gt;</a>
-	<a href="javascript:void(0);" onclick="seekToRelative(30);">&gt;&gt;</a>
 	<br>
         Volume <input id="volumeSetting" type="text" size="3" /> 
         <a href="javascript:void(0);" onclick="muteVideo();">Mute</a> |

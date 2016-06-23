@@ -11,3 +11,5 @@ Take off - (graduation song)](https://rawgit.com/kaicarver/ytplayer/master/qifei
 See also:
 
 * [annotated Well-Tempered Clavier - Svatoslav Richter](https://htmlpreview.github.io/?https://github.com/kaicarver/wtc/blob/master/wtc.html)
+
+TODO: stop using Flash version of Youtube player

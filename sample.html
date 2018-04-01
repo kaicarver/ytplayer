@@ -1,25 +1,40 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <!-- from https://developers.google.com/youtube/iframe_api_reference -->
-    <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
-    <div id="player"></div>
-    <div id="playertime"></div>
+  <head>
+    <!-- Show subtitles for a Youtube Video.
+	 Started from sample here: https://developers.google.com/youtube/iframe_api_reference -->
+    <meta charset="utf-8">
+    <title>Test subtitling Youtube Video</title>
+    <style>
+      #credits { font-size: 0.6em; }
+    </style>
     <script>
-      // 2. This code loads the IFrame Player API code asynchronously.
+      //var synth;
+      window.onload = function () {
+	//document.getElementById('examples').innerHTML = html;
+      }
+    </script>
+  </head>
+  <body>
+    <div id="player">[video]</div>    
+    <div id="playertitle">[movement title]</div>
+    <div id="playertime">[video timecode]</div>
+    <script>
+      // 1. load the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
-
       tag.src = "https://www.youtube.com/iframe_api";
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
+      // 2. the API calls this function the page has downloaded the JavaScript for the player API
       var player;
       function onYouTubeIframeAPIReady() {
+	console.log("iframe player API ready");
+	// create an <iframe> (and YouTube player) after the API code downloads.
+	// Embedded players must have a viewport that is at least 200px by 200px
         player = new YT.Player('player', {
-          height: '390',
-          width: '640',
+          height: '200',
+          width: '400', // for 16/9 aspect ratio
           videoId: 'QrrdWYh9Hwc',
           events: {
             'onReady': onPlayerReady,
@@ -28,32 +43,98 @@
         });
       }
 
-      // 4. The API will call this function when the video player is ready.
+      // 3. the API will call this function when the video player is ready.
       function onPlayerReady(event) {
+	console.log("player ready");
+	var playerTime = document.getElementById('playertime');	
 	// just go ahead and start the video when the player is ready
 	// this will start the video at the point where it was last played
-        event.target.playVideo();
+	event.target.playVideo();
+	setInterval(function() {
+	  playerTime.innerText = Math.round(player.getCurrentTime()*10)/10;
+	}, 100);	
       }
 
-      // 5. The API calls this function when the player's state changes.
-      //    The function indicates that when playing a video (state=1),
-      //    the player should play for six seconds and then stop.
+      // 4. The API calls this function when the player's state changes.
       var done = false;
       function onPlayerStateChange(event) {
-        if (event.data == YT.PlayerState.PLAYING && !done) {
-          //setTimeout(stopVideo, 6000);
-          //done = true;
-        }
+	console.log("player state change: ",
+		    Object.keys(YT.PlayerState).find(key => YT.PlayerState[key] === event.data));
       }
-      function stopVideo() {
-        player.stopVideo();
-      }
-      var playerTime = document.getElementById('playertime');
-      setInterval(function() {
-	if (player) {
-	  playerTime.innerText = player.getCurrentTime();
-	}
-      }, 1000);
     </script>
+    <div id="titles">00:00 Kommt, ihr Töchter, helft mir klagen (Chor)
+05:50 Da Jesus diese Rede vollendet hatte (Rezitativ)
+06:38 Herzliebster Jesu (Chor)
+07:30 Da versammelten sich die Hohenpriester (Rezitativ)
+10:40 Du lieber Heiland du (Accompagnato-Rezitativ)
+11:28 Buß und Reu (Arie)
+15:07 Da ging hin der Zwölfen einer (Rezitativ)
+15:44 Blute nur, du liebes Herz! (Arie)
+19:40 Aber am ersten Tage der süßen Brot (Rezitativ)
+21:44 Herr, bin ich’s? (Chor)
+22:50 Er antwortete und sprach (Rezitativ)
+25:45 Wiewohl mein Herz in Tränen schwimmt (Acc.-Rezitativ)
+26:50 Ich will dir mein Herze schenken (Arie)
+30:10 Und da sie den Lobgesang gesprochen hatten (Rezitativ)
+31:10 Erkenne mich, mein Hüter (Chor)
+32:18 Petrus aber antwortete (Rezitativ)
+33:25 Ich will hier bei dir stehen (Chor)
+34:33 Da kam Jesus mit ihnen zu einem Hofe (Rezitativ)
+36:12 Hier zittert das gequälte Herz (Acc.-Rezitativ)
+37:55 Ich will bei meinem Jesu wachen (Arie)
+42:43 Und ging hin ein wenig (Rezitativ)
+43:28 Der Heiland fällt vor seinem Vater nieder (Acc.-Rezitativ)
+44:18 Gerne will ich mich bequemen (Arie)
+47:55 Und er kam zu seinen Jüngern (Rezitativ)
+49:15 Was mein Gott will, das g’scheh allzeit (Chor)
+50:25 Und er kam und fand sie aber schlafend (Rezitativ)
+52:50 So ist mein Jesus nun gefangen (Arie)
+56:09 Sind Blitze, sind Donner in Wolken verschwunden? (Chor)
+57:18 Und siehe, einer aus denen (Rezitativ)
+59:43 O Mensch, bewein dein Sünde groß (Chor)
+01:05:00 Ach! nun ist mein Jesus hin! (Arie)
+01:08:15 Die aber Jesum gegriffen hatten (Rezitativ)
+01:09:27 Mir hat die Welt trüglich gericht’ (Chor)
+01:10:18 Und wiewohl viel falsche Zeugen herzutraten (Rezitativ)
+01:11:32 Mein Jesus schweigt (Acc.-Rezitativ)
+01:12:30 Geduld! Wenn mich falsche Zungen stechen (Arie)
+01:15:43 Und der Hohepriester antwortete (Rezitativ)
+01:17:04 Er ist des Todes schuldig! (Chor)
+01:17:52 Wer hat dich so geschlagen (Chor)
+01:18:48 Petrus aber saß draußen (Rezitativ)
+01:21:14 Erbarme dich (Arie)
+01:26:15 Bin ich gleich von dir gewichen (Chor)
+01:27:28 Des Morgens aber hielten alle Hohepriester (Rezitativ)
+01:29:28 Gebt mir meinen Jesum wieder! (Arie)
+01:32:04 Sie hielten aber einen Rat (Rezitativ)
+01:34:20 Befiehl du deine Wege (Chor)
+01:35:33 Auf das Fest aber hatte der Landpfleger Gewohnheit
+01:37:45 Laß ihn kreuzigen! (Chor)
+01:38:55 Der Landpfleger sagte (Rezitativ)
+01:39:12 Er hat uns allen wohlgetan (Acc.-Rezitativ)
+01:40:08 Aus Liebe will mein Heiland sterben (Arie)
+01:44:29 Sie schrieen aber noch mehr (Rezitativ)
+01:46:26 Erbarm es Gott! (Acc.-Rezitativ)
+01:47:20 Können Tränen meiner Wangen (Arie)
+01:53:30 Da nahmen die Kriegsknechte (Rezitativ)
+01:54:40 O Haupt voll Blut und Wunden (Chor)
+01:56:58 Und da sie ihn verspottet hatten (Rezitativ)
+01:58:05 Ja freilich will in uns (Acc.-Rezitativ)
+01:58:40 Komm, süßes Kreuz (Arie)
+02:03:32 Und da sie an die Stätte kamen (Rezitativ)
+02:07:09 Ach Golgatha (Acc.-Rezitativ)
+02:08:20 Sehet, Jesus hat die Hand (Arie)
+02:11:11 Und von der sechsten Stunde an (Rezitativ)
+02:13:30 Wenn ich einmal soll scheiden (Chor)
+02:17:40 Am Abend, da es kühle war (Acc.-Rezitativ)
+02:19:18 Mache dich, mein Herze, rein (Arie)
+02:24:32 Und Joseph nahm den Leib (Rezitativ)
+02:27:06 Nun ist der Herr zur Ruh gebracht (Acc.-Rezitativ)
+02:28:50 Wir setzen uns mit Tränen nieder (Schlusschor)
+</div>
+    <p id="credits">
+      Source code:
+      <a target="_blank" href="https://github.com/kaicarver/ytplayer">https://github.com/kaicarver/ytplayer</a>
+    </p>
   </body>
 </html>

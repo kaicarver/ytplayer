@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     <title>Test subtitling Youtube Video</title>
     <style>
+      #player { float: right; }
       #credits { font-size: 0.6em; }
     </style>
     <script>
@@ -26,8 +27,9 @@
       var firstScriptTag = document.getElementsByTagName('script')[0];
       firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      // 2. the API calls this function the page has downloaded the JavaScript for the player API
+      // 2. the API calls this function after page downloaded player API
       var player;
+      var curvol;
       function onYouTubeIframeAPIReady() {
 	console.log("iframe player API ready");
 	// create an <iframe> (and YouTube player) after the API code downloads.
@@ -49,9 +51,15 @@
 	var playerTime = document.getElementById('playertime');	
 	// just go ahead and start the video when the player is ready
 	// this will start the video at the point where it was last played
+	// since we just want to cue up the video, we set the volume to zero
+	curvol = player.getVolume()
+	player.setVolume(0);
 	event.target.playVideo();
 	setInterval(function() {
-	  playerTime.innerText = Math.round(player.getCurrentTime()*10)/10;
+	  var date = new Date(null);
+	  date.setSeconds(player.getCurrentTime()); // specify value for SECONDS here
+	  playerTime.innerText = date.toISOString().substr(11, 8);
+	  //playerTime.innerText = Math.round(player.getCurrentTime()*10)/10;
 	}, 100);	
       }
 
@@ -60,6 +68,13 @@
       function onPlayerStateChange(event) {
 	console.log("player state change: ",
 		    Object.keys(YT.PlayerState).find(key => YT.PlayerState[key] === event.data));
+	if (event.data == YT.PlayerState.PLAYING && !done) {
+	  // try to cue up the video but leave it paused
+	  // restore original volume after paused
+	  player.pauseVideo();
+	  player.setVolume(curvol);
+          done = true;
+        }
       }
     </script>
     <div id="titles">00:00 Kommt, ihr Töchter, helft mir klagen (Chor)

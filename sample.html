@@ -4,7 +4,7 @@
     <!-- from https://developers.google.com/youtube/iframe_api_reference -->
     <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
     <div id="player"></div>
-
+    <div id="playertime"></div>
     <script>
       // 2. This code loads the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
@@ -20,7 +20,7 @@
         player = new YT.Player('player', {
           height: '390',
           width: '640',
-          videoId: 'M7lc1UVf-VE',
+          videoId: 'QrrdWYh9Hwc',
           events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
@@ -30,6 +30,8 @@
 
       // 4. The API will call this function when the video player is ready.
       function onPlayerReady(event) {
+	// just go ahead and start the video when the player is ready
+	// this will start the video at the point where it was last played
         event.target.playVideo();
       }
 
@@ -39,13 +41,19 @@
       var done = false;
       function onPlayerStateChange(event) {
         if (event.data == YT.PlayerState.PLAYING && !done) {
-          setTimeout(stopVideo, 6000);
-          done = true;
+          //setTimeout(stopVideo, 6000);
+          //done = true;
         }
       }
       function stopVideo() {
         player.stopVideo();
       }
+      var playerTime = document.getElementById('playertime');
+      setInterval(function() {
+	if (player) {
+	  playerTime.innerText = player.getCurrentTime();
+	}
+      }, 1000);
     </script>
   </body>
 </html>

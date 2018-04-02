@@ -6,8 +6,31 @@
     <meta charset="utf-8">
     <title>Test subtitling Youtube Video</title>
     <style>
-      #player { float: right; }
       #credits { font-size: 0.6em; }
+      #player { xfloat:right; }
+      /* this puts the video in full screen background */
+      #player_full {
+	  position: absolute;
+	  width: 100%;
+	  height: 100%;
+	  top: 0;
+	  left: 0;
+	  bottom: 0;
+	  right: 0;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  align-items: center;
+	  z-index: -1;
+      }
+      #playertitle, #playertime {
+	  color:black; background-color: white; opacity: 0.8; xtext-align: center;
+      }
+      xiframe {
+	  /* optional */
+	  width: 100%;
+	  height: 100%; 
+      }      
     </style>
     <script>
       //var synth;
@@ -42,12 +65,45 @@
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
           }
-        });
+	});
+	setupTitles();
+      }
+      var titles;
+      function setupTitles() {
+	titles = document.getElementById('titles').innerHTML.split(/\n/).map(function(s) {
+	  var i = s.indexOf(' ');
+	  var timecode = s.slice(0, i).trim();
+	  var title = s.slice(i + 1, s.length).trim();
+	  return { 'timecode' : timecode, 'title' : title, 'seconds' : time2seconds(timecode) };
+	});
+	let list = [];
+	for (let i = 0; i < titles.length; i++) {
+	  list.push((i+1)+'. '+titles[i].timecode+' '+titles[i].title+'<br/>');
+	}
+	document.getElementById('titles').innerHTML = list.join("");
+      }
+      function searchTitle(seconds) {
+	let i = 0;
+	for (; i < titles.length; i++) {
+	  if (seconds < titles[i].seconds) {
+	    break;
+	  }
+	}
+	return i - 1;
+      }
+      function time2seconds(timecode) {
+	var times = timecode.split(":");
+	var seconds = 0;
+	for (let i = 0; i < times.length; i++) {
+	  seconds += Math.pow(60,i) * times[times.length - i - 1];
+	}
+	return seconds;
       }
 
       // 3. the API will call this function when the video player is ready.
       function onPlayerReady(event) {
 	console.log("player ready");
+	var playerTitle = document.getElementById('playertitle');	
 	var playerTime = document.getElementById('playertime');	
 	// just go ahead and start the video when the player is ready
 	// this will start the video at the point where it was last played
@@ -56,18 +112,19 @@
 	player.setVolume(0);
 	event.target.playVideo();
 	setInterval(function() {
-	  var date = new Date(null);
-	  date.setSeconds(player.getCurrentTime()); // specify value for SECONDS here
+	  let date = new Date(null);
+	  let curtime = player.getCurrentTime();
+	  date.setSeconds(curtime);
 	  playerTime.innerText = date.toISOString().substr(11, 8);
-	  //playerTime.innerText = Math.round(player.getCurrentTime()*10)/10;
+	  let titlecnt = searchTitle(curtime)
+	  playerTitle.innerText = (titlecnt + 1) + '. ' + titles[titlecnt].title;
 	}, 100);	
       }
 
       // 4. The API calls this function when the player's state changes.
       var done = false;
       function onPlayerStateChange(event) {
-	console.log("player state change: ",
-		    Object.keys(YT.PlayerState).find(key => YT.PlayerState[key] === event.data));
+	//console.log("player state change: ", Object.keys(YT.PlayerState).find(key => YT.PlayerState[key] === event.data));
 	if (event.data == YT.PlayerState.PLAYING && !done) {
 	  // try to cue up the video but leave it paused
 	  // restore original volume after paused
@@ -145,8 +202,7 @@
 02:19:18 Mache dich, mein Herze, rein (Arie)
 02:24:32 Und Joseph nahm den Leib (Rezitativ)
 02:27:06 Nun ist der Herr zur Ruh gebracht (Acc.-Rezitativ)
-02:28:50 Wir setzen uns mit Tränen nieder (Schlusschor)
-</div>
+02:28:50 Wir setzen uns mit Tränen nieder (Schlusschor)</div>
     <p id="credits">
       Source code:
       <a target="_blank" href="https://github.com/kaicarver/ytplayer">https://github.com/kaicarver/ytplayer</a>

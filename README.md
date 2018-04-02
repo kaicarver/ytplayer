@@ -8,6 +8,8 @@ Fragrance of Rice - Jay Chou](http://htmlpreview.github.io/?https://github.com/k
 Qǐfēi<br>
 Take off - (graduation song)](https://rawgit.com/kaicarver/ytplayer/master/qifei.html)
 
+* [Matthäus-Passion](https://rawgit.com/kaicarver/ytplayer/master/sample.html)
+
 See also:
 
 * [annotated Well-Tempered Clavier - Svatoslav Richter](https://htmlpreview.github.io/?https://github.com/kaicarver/wtc/blob/master/wtc.html)

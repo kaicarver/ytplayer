@@ -4,9 +4,9 @@
     <!-- Show subtitles for a Youtube Video.
 	 Started from sample here: https://developers.google.com/youtube/iframe_api_reference -->
     <meta charset="utf-8">
-    <title>Test subtitling Youtube Video</title>
+    <title>Matthäus-Passion, subtitled</title>
     <style>
-      #credits { font-size: 0.6em; }
+      #credits { font-size: 0.8em; }
       #player { xfloat:right; }
       /* this puts the video in full screen background */
       #player_full {
@@ -159,7 +159,8 @@
         }
       }
       function seekToTitle(titlecnt) {
-	player.seekTo(titles[titlecnt].seconds, true);
+	let bufferAfterSeek = true;
+	player.seekTo(titles[titlecnt].seconds, bufferAfterSeek);
       }
     </script>
     <div id="titlesdata">00:00 Kommt, ihr Töchter, helft mir klagen (Chor)

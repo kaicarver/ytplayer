@@ -26,11 +26,16 @@
       #playertitle, #playertime {
 	  color:black; background-color: white; opacity: 0.8; xtext-align: center;
       }
+      #titlesdata { display: none; }
       xiframe {
 	  /* optional */
 	  width: 100%;
 	  height: 100%; 
-      }      
+      }
+      table { width: 100%; }
+      td { vertical-align: top; }
+      td.text { width: 65%; }
+      span.title { cursor: pointer; color: darkblue; }
     </style>
     <script>
       //var synth;
@@ -40,9 +45,19 @@
     </script>
   </head>
   <body>
-    <div id="player">[video]</div>    
-    <div id="playertitle">[movement title]</div>
-    <div id="playertime">[video timecode]</div>
+    <table>
+      <tr>
+	<td class="text">
+	  <div id="playertext">[movement text]</div>
+	</td>
+	<td>
+	  <div id="player">[video]</div>    
+	  <div id="playertitle">[movement title]</div>
+	  <div id="playertime">[video timecode]</div>
+	  <div id="titleslabels">[titles labels]</div>
+	</td>
+      </tr>
+    </table>
     <script>
       // 1. load the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
@@ -54,7 +69,6 @@
       var player;
       var curvol;
       function onYouTubeIframeAPIReady() {
-	console.log("iframe player API ready");
 	// create an <iframe> (and YouTube player) after the API code downloads.
 	// Embedded players must have a viewport that is at least 200px by 200px
         player = new YT.Player('player', {
@@ -70,17 +84,27 @@
       }
       var titles;
       function setupTitles() {
-	titles = document.getElementById('titles').innerHTML.split(/\n/).map(function(s) {
+	titles = document.getElementById('titlesdata').innerHTML.split(/\n@/).map(function(s) {
 	  var i = s.indexOf(' ');
 	  var timecode = s.slice(0, i).trim();
-	  var title = s.slice(i + 1, s.length).trim();
-	  return { 'timecode' : timecode, 'title' : title, 'seconds' : time2seconds(timecode) };
+	  var tt = s.slice(i + 1, s.length).trim();
+	  i = tt.indexOf("\n");
+	  var title, text;
+	  if (i > 0) {
+	    title = tt.slice(0, i).trim();
+	    text = tt.slice(i + 1, s.length).trim();
+	  } else {
+	    title = tt;
+	    text = '[no text yet]';
+	  }
+	  return { 'timecode' : timecode, 'title' : title, 'seconds' : time2seconds(timecode), 'text' : text };
 	});
 	let list = [];
 	for (let i = 0; i < titles.length; i++) {
-	  list.push((i+1)+'. '+titles[i].timecode+' '+titles[i].title+'<br/>');
+	  list.push('<span class="title" onclick="seekToTitle(' + i + ')">' +
+		    (i+1) + '. ' + titles[i].timecode + ' ' + titles[i].title + '</span><br/>');
 	}
-	document.getElementById('titles').innerHTML = list.join("");
+	document.getElementById('titleslabels').innerHTML = list.join("");
       }
       function searchTitle(seconds) {
 	let i = 0;
@@ -102,8 +126,8 @@
 
       // 3. the API will call this function when the video player is ready.
       function onPlayerReady(event) {
-	console.log("player ready");
 	var playerTitle = document.getElementById('playertitle');	
+	var playerText = document.getElementById('playertext');	
 	var playerTime = document.getElementById('playertime');	
 	// just go ahead and start the video when the player is ready
 	// this will start the video at the point where it was last played
@@ -116,8 +140,9 @@
 	  let curtime = player.getCurrentTime();
 	  date.setSeconds(curtime);
 	  playerTime.innerText = date.toISOString().substr(11, 8);
-	  let titlecnt = searchTitle(curtime)
+	  let titlecnt = searchTitle(curtime);
 	  playerTitle.innerText = (titlecnt + 1) + '. ' + titles[titlecnt].title;
+	  playerText.innerText = titles[titlecnt].text;
 	}, 100);	
       }
 
@@ -133,77 +158,150 @@
           done = true;
         }
       }
+      function seekToTitle(titlecnt) {
+	player.seekTo(titles[titlecnt].seconds, true);
+      }
     </script>
-    <div id="titles">00:00 Kommt, ihr Töchter, helft mir klagen (Chor)
-05:50 Da Jesus diese Rede vollendet hatte (Rezitativ)
-06:38 Herzliebster Jesu (Chor)
-07:30 Da versammelten sich die Hohenpriester (Rezitativ)
-10:40 Du lieber Heiland du (Accompagnato-Rezitativ)
-11:28 Buß und Reu (Arie)
-15:07 Da ging hin der Zwölfen einer (Rezitativ)
-15:44 Blute nur, du liebes Herz! (Arie)
-19:40 Aber am ersten Tage der süßen Brot (Rezitativ)
-21:44 Herr, bin ich’s? (Chor)
-22:50 Er antwortete und sprach (Rezitativ)
-25:45 Wiewohl mein Herz in Tränen schwimmt (Acc.-Rezitativ)
-26:50 Ich will dir mein Herze schenken (Arie)
-30:10 Und da sie den Lobgesang gesprochen hatten (Rezitativ)
-31:10 Erkenne mich, mein Hüter (Chor)
-32:18 Petrus aber antwortete (Rezitativ)
-33:25 Ich will hier bei dir stehen (Chor)
-34:33 Da kam Jesus mit ihnen zu einem Hofe (Rezitativ)
-36:12 Hier zittert das gequälte Herz (Acc.-Rezitativ)
-37:55 Ich will bei meinem Jesu wachen (Arie)
-42:43 Und ging hin ein wenig (Rezitativ)
-43:28 Der Heiland fällt vor seinem Vater nieder (Acc.-Rezitativ)
-44:18 Gerne will ich mich bequemen (Arie)
-47:55 Und er kam zu seinen Jüngern (Rezitativ)
-49:15 Was mein Gott will, das g’scheh allzeit (Chor)
-50:25 Und er kam und fand sie aber schlafend (Rezitativ)
-52:50 So ist mein Jesus nun gefangen (Arie)
-56:09 Sind Blitze, sind Donner in Wolken verschwunden? (Chor)
-57:18 Und siehe, einer aus denen (Rezitativ)
-59:43 O Mensch, bewein dein Sünde groß (Chor)
-01:05:00 Ach! nun ist mein Jesus hin! (Arie)
-01:08:15 Die aber Jesum gegriffen hatten (Rezitativ)
-01:09:27 Mir hat die Welt trüglich gericht’ (Chor)
-01:10:18 Und wiewohl viel falsche Zeugen herzutraten (Rezitativ)
-01:11:32 Mein Jesus schweigt (Acc.-Rezitativ)
-01:12:30 Geduld! Wenn mich falsche Zungen stechen (Arie)
-01:15:43 Und der Hohepriester antwortete (Rezitativ)
-01:17:04 Er ist des Todes schuldig! (Chor)
-01:17:52 Wer hat dich so geschlagen (Chor)
-01:18:48 Petrus aber saß draußen (Rezitativ)
-01:21:14 Erbarme dich (Arie)
-01:26:15 Bin ich gleich von dir gewichen (Chor)
-01:27:28 Des Morgens aber hielten alle Hohepriester (Rezitativ)
-01:29:28 Gebt mir meinen Jesum wieder! (Arie)
-01:32:04 Sie hielten aber einen Rat (Rezitativ)
-01:34:20 Befiehl du deine Wege (Chor)
-01:35:33 Auf das Fest aber hatte der Landpfleger Gewohnheit
-01:37:45 Laß ihn kreuzigen! (Chor)
-01:38:55 Der Landpfleger sagte (Rezitativ)
-01:39:12 Er hat uns allen wohlgetan (Acc.-Rezitativ)
-01:40:08 Aus Liebe will mein Heiland sterben (Arie)
-01:44:29 Sie schrieen aber noch mehr (Rezitativ)
-01:46:26 Erbarm es Gott! (Acc.-Rezitativ)
-01:47:20 Können Tränen meiner Wangen (Arie)
-01:53:30 Da nahmen die Kriegsknechte (Rezitativ)
-01:54:40 O Haupt voll Blut und Wunden (Chor)
-01:56:58 Und da sie ihn verspottet hatten (Rezitativ)
-01:58:05 Ja freilich will in uns (Acc.-Rezitativ)
-01:58:40 Komm, süßes Kreuz (Arie)
-02:03:32 Und da sie an die Stätte kamen (Rezitativ)
-02:07:09 Ach Golgatha (Acc.-Rezitativ)
-02:08:20 Sehet, Jesus hat die Hand (Arie)
-02:11:11 Und von der sechsten Stunde an (Rezitativ)
-02:13:30 Wenn ich einmal soll scheiden (Chor)
-02:17:40 Am Abend, da es kühle war (Acc.-Rezitativ)
-02:19:18 Mache dich, mein Herze, rein (Arie)
-02:24:32 Und Joseph nahm den Leib (Rezitativ)
-02:27:06 Nun ist der Herr zur Ruh gebracht (Acc.-Rezitativ)
-02:28:50 Wir setzen uns mit Tränen nieder (Schlusschor)</div>
+    <div id="titlesdata">00:00 Kommt, ihr Töchter, helft mir klagen (Chor)
+      Chor I und II und Choral
+      Kommt, ihr Töchter, helft mir klagen,
+      Sehet! - Wen? - den Bräutigam!
+      Seht ihn! - Wie? - als wie ein Lamm.
+      Sehet! - Was? - seht die Geduld,
+      Seht! - Wohin? - auf unsre Schuld.
+      Sehet ihn aus Lieb und Huld
+      Holz zum Kreuze selber tragen.
+      
+      Choral
+      O Lamm Gottes unschuldig,
+      Am Stamm des Kreuzes geschlachtet,
+      Allzeit erfunden geduldig,
+      Wiewohl du warest verachtet.
+      All Sünd hast du getragen,
+      Sonst müßten wir verzagen.
+      Erbarm dich unser, o Jesu.
+@05:54 Da Jesus diese Rede vollendet hatte (Rezitativ)
+      Evangelist
+      Da Jesus diese Rede vollendet hatte, sprach er zu seinen Jüngern:
+      
+      Jesus
+      Ihr wisset daß nach zweien Tagen Ostern wird, und des Menschen Sohn wird überantwortet werden, daß er gekreuziget werde.
+@06:38 Herzliebster Jesu (Chor)
+      Choral
+      Herzliebster Jesu, was hast du verbrochen,
+      Daß man ein solch scharf Urteil hat gesprochen?
+      Was ist die Schuld, in was für Missetaten
+      Bist du geraten?
+@07:30 Da versammelten sich die Hohenpriester (Rezitativ)
+      Evangelist
+      Da versammleten sich die Hohenpriester und Schriftgelehrten und die Ältesten im Volk in den Palast des Hohenpriesters, der da hieß Kaiphas, und hielten Rat, wie sie Jesum mit Listen griffen und töteten. Sie sprachen aber:
+
+      Chor I und II
+      Ja nicht auf das Fest, auf daß nicht ein Aufruhr werde im Volk.
+
+      Evangelist
+      Da nun Jesus war zu Bethanien, im Hause Simonis des Aussätzigen, trat zu ihm ein Weib, die hatte ein Glas mit köstlichem Wasser und goß es auf sein Haupt, da er zu Tische saß. Da das seine Jünger sahen, wurden sie unwillig und sprachen:
+
+      Chor I
+      Wozu dienet dieser Unrat? Dieses Wasser hätte mögen teuer verkauft und den Armen gegeben werden.
+
+      Evangelist
+      Da das Jesus merkete, sprach er zu ihnen:
+
+      Jesus
+      Was bekümmert ihr das Weib? Sie hat ein gut Werk an mir getan. Ihr habet allezeit Armen bei euch, mich aber habt ihr nicht allezeit. Daß sie dies Wasser hat auf meinen Leib gegossen, hat sie getan, daß man mich begraben wird. Wahrlich, ich sage euch: Wo dies Evangelium geprediget wird in der ganzen Welt, da wird man auch sagen zu ihrem Gedächtnis, was sie getan hat.
+@10:40 Du lieber Heiland du (Accompagnato-Rezitativ)
+      Chor I
+      Du lieber Heiland du,
+      Wenn deiner Jünger töricht streiten,
+      Daß diese fromme Weib
+      Mit Salben deinen Leib
+      zum Grabe will bereiten,
+      So lasse mir inzwischen zu, 
+      Von meiner Augen Tränenflüssen
+      Ein Wasser auf sein Haupt zu gießen!
+@11:28 Buß und Reu (Arie)
+      Chor I
+      Buß und Reu, Buß und Reu
+      Knirscht das Sündenherz entzwei.
+      Das die Tropfen meiner Zähren
+      Angenehme Spezerei,
+      Treuer Jesu, dir gebären.
+@15:07 Da ging hin der Zwölfen einer (Rezitativ)
+      
+@15:44 Blute nur, du liebes Herz! (Arie)
+@19:40 Aber am ersten Tage der süßen Brot (Rezitativ)
+@21:44 Herr, bin ich’s? (Chor)
+@22:50 Er antwortete und sprach (Rezitativ)
+@25:45 Wiewohl mein Herz in Tränen schwimmt (Acc.-Rezitativ)
+@26:50 Ich will dir mein Herze schenken (Arie)
+@30:10 Und da sie den Lobgesang gesprochen hatten (Rezitativ)
+@31:10 Erkenne mich, mein Hüter (Chor)
+@32:18 Petrus aber antwortete (Rezitativ)
+@33:25 Ich will hier bei dir stehen (Chor)
+@34:33 Da kam Jesus mit ihnen zu einem Hofe (Rezitativ)
+@36:12 Hier zittert das gequälte Herz (Acc.-Rezitativ)
+@37:55 Ich will bei meinem Jesu wachen (Arie)
+@42:43 Und ging hin ein wenig (Rezitativ)
+@43:28 Der Heiland fällt vor seinem Vater nieder (Acc.-Rezitativ)
+@44:18 Gerne will ich mich bequemen (Arie)
+@47:55 Und er kam zu seinen Jüngern (Rezitativ)
+@49:15 Was mein Gott will, das g’scheh allzeit (Chor)
+@50:25 Und er kam und fand sie aber schlafend (Rezitativ)
+@52:50 So ist mein Jesus nun gefangen (Arie)
+@56:09 Sind Blitze, sind Donner in Wolken verschwunden? (Chor)
+@57:18 Und siehe, einer aus denen (Rezitativ)
+@59:43 O Mensch, bewein dein Sünde groß (Chor)
+@01:05:00 Ach! nun ist mein Jesus hin! (Arie)
+@01:08:15 Die aber Jesum gegriffen hatten (Rezitativ)
+@01:09:27 Mir hat die Welt trüglich gericht’ (Chor)
+@01:10:18 Und wiewohl viel falsche Zeugen herzutraten (Rezitativ)
+@01:11:32 Mein Jesus schweigt (Acc.-Rezitativ)
+@01:12:30 Geduld! Wenn mich falsche Zungen stechen (Arie)
+@01:15:43 Und der Hohepriester antwortete (Rezitativ)
+@01:17:04 Er ist des Todes schuldig! (Chor)
+@01:17:52 Wer hat dich so geschlagen (Chor)
+@01:18:48 Petrus aber saß draußen (Rezitativ)
+@01:21:14 Erbarme dich (Arie)
+@01:26:15 Bin ich gleich von dir gewichen (Chor)
+@01:27:28 Des Morgens aber hielten alle Hohepriester (Rezitativ)
+@01:29:28 Gebt mir meinen Jesum wieder! (Arie)
+@01:32:04 Sie hielten aber einen Rat (Rezitativ)
+@01:34:20 Befiehl du deine Wege (Chor)
+@01:35:33 Auf das Fest aber hatte der Landpfleger Gewohnheit
+@01:37:45 Laß ihn kreuzigen! (Chor)
+@01:38:55 Der Landpfleger sagte (Rezitativ)
+@01:39:12 Er hat uns allen wohlgetan (Acc.-Rezitativ)
+@01:40:08 Aus Liebe will mein Heiland sterben (Arie)
+@01:44:29 Sie schrieen aber noch mehr (Rezitativ)
+@01:46:26 Erbarm es Gott! (Acc.-Rezitativ)
+@01:47:20 Können Tränen meiner Wangen (Arie)
+@01:53:30 Da nahmen die Kriegsknechte (Rezitativ)
+@01:54:40 O Haupt voll Blut und Wunden (Chor)
+@01:56:58 Und da sie ihn verspottet hatten (Rezitativ)
+@01:58:05 Ja freilich will in uns (Acc.-Rezitativ)
+@01:58:40 Komm, süßes Kreuz (Arie)
+@02:03:32 Und da sie an die Stätte kamen (Rezitativ)
+@02:07:09 Ach Golgatha (Acc.-Rezitativ)
+@02:08:20 Sehet, Jesus hat die Hand (Arie)
+@02:11:11 Und von der sechsten Stunde an (Rezitativ)
+@02:13:30 Wenn ich einmal soll scheiden (Chor)
+@02:17:40 Am Abend, da es kühle war (Acc.-Rezitativ)
+@02:19:18 Mache dich, mein Herze, rein (Arie)
+@02:24:32 Und Joseph nahm den Leib (Rezitativ)
+@02:27:06 Nun ist der Herr zur Ruh gebracht (Acc.-Rezitativ)
+@02:28:50 Wir setzen uns mit Tränen nieder (Schlusschor)</div>
     <p id="credits">
+      Credits:<br>
+      Performance video, with movement titles and time codes in description:<br>
+      <a href="https://www.youtube.com/watch?v=QrrdWYh9Hwc">Matthäus-Passion (BWV 244) concert by Tölzer Knabenchor & Hofkapelle München, conducted by Christian Fliegner</a><br>
+      Lyrics and structure:<br>
+      <a href="http://www.emmanuelmusic.org/notes_translations/translations_cantata/t_bwv244.htm">Emmanuel Music's lyrics and translation of BWV 244 - "Matthäus-Passion"</a><br>
+      (Emmanuel Music is happy to grant permission to use texts, translations, and notes.<br>
+      Please send an email to music@emmanuelmusic.org with your request.<br>
+      http://emmanuelmusic.org/notes_translations/nt_notes_transl_cantatas.htm)<br>
+      <a href="http://www.gbt.org/music/St_Matthew_text.pdf">Another text and translation of Bach's St. Matthew Passion</a><br>
+      <a href="https://en.wikipedia.org/wiki/St_Matthew_Passion_structure#Movements">Wikipedia's detailed list of movements</a><br>
       Source code:
       <a target="_blank" href="https://github.com/kaicarver/ytplayer">https://github.com/kaicarver/ytplayer</a>
     </p>

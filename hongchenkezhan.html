@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Show subtitles for a Youtube Video.
+	 Started from sample here: https://developers.google.com/youtube/iframe_api_reference -->
+    <meta charset="utf-8">
+    <title>Hong Chen Ke Zhan, subtitled</title>
+    <style>
+      #credits { font-size: 0.8em; }
+      #player { xfloat:right; }
+      /* this puts the video in full screen background */
+      #player_full {
+	  position: absolute;
+	  width: 100%;
+	  height: 100%;
+	  top: 0;
+	  left: 0;
+	  bottom: 0;
+	  right: 0;
+	  display: flex;
+	  flex-direction: column;
+	  justify-content: center;
+	  align-items: center;
+	  z-index: -1;
+      }
+      #playertitle, #playertime {
+	  color:black; background-color: white; opacity: 0.8; xtext-align: center;
+      }
+      #titlesdata { display: none; }
+      xiframe {
+	  /* optional */
+	  width: 100%;
+	  height: 100%; 
+      }
+      table { width: 100%; }
+      td { vertical-align: top; }
+      td.text { width: 65%; text-align: center; }
+      span.title { cursor: pointer; color: darkblue; }
+      .hanzi { font-size: 2em; color: black; }
+    </style>
+    <script>
+      //var synth;
+      window.onload = function () {
+	//document.getElementById('examples').innerHTML = html;
+      }
+    </script>
+  </head>
+  <body>
+    <table>
+      <tr>
+	<td class="text">
+	  <div id="player">[video]</div>    
+	  <div id="playertext">[movement text]</div>
+	</td>
+	<td>
+	  <div id="playertitle">[movement title]</div>
+	  <div id="playertime">[video timecode]</div>
+	  <div id="titleslabels">[titles labels]</div>
+	</td>
+      </tr>
+    </table>
+    <script>
+      // 1. load the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 2. the API calls this function after page downloaded player API
+      var player;
+      var curvol;
+      function onYouTubeIframeAPIReady() {
+	// create an <iframe> (and YouTube player) after the API code downloads.
+	// Embedded players must have a viewport that is at least 200px by 200px
+        player = new YT.Player('player', {
+          height: '200',
+          width: '400', // for 16/9 aspect ratio
+          videoId: 'L6joGUdc6y4',
+          events: {
+            'onReady': onPlayerReady,
+            'onStateChange': onPlayerStateChange
+          }
+	});
+	setupTitles();
+      }
+      var titles;
+      function setupTitles() {
+	titles = document.getElementById('titlesdata').innerHTML.split(/\n@/).map(function(s) {
+	  var i = s.indexOf(' ');
+	  var timecode = s.slice(0, i).trim();
+	  var tt = s.slice(i + 1, s.length).trim();
+	  i = tt.indexOf("\n");
+	  var title, text;
+	  if (i > 0) {
+	    title = tt.slice(0, i).trim();
+	    text = tt.slice(i + 1, s.length).trim();
+	    text = text.replace("\n", '<br>');
+	  } else {
+	    title = tt;
+	    text = '[no text yet]';
+	  }
+	  return { 'timecode' : timecode, 'title' : title, 'seconds' : time2seconds(timecode), 'text' : text };
+	});
+	let list = [];
+	for (let i = 0; i < titles.length; i++) {
+	  list.push('<span class="title" title="'  + (i+1) + '. ' + titles[i].timecode + '" onclick="seekToTitle(' + i + ')">' +
+		    titles[i].timecode + ' ' + titles[i].title + '</span><br/>');
+	}
+	document.getElementById('titleslabels').innerHTML = list.join("");
+      }
+      function searchTitle(seconds) {
+	let i = 0;
+	for (; i < titles.length; i++) {
+	  if (seconds < titles[i].seconds) {
+	    break;
+	  }
+	}
+	return i - 1;
+      }
+      function time2seconds(timecode) {
+	var times = timecode.split(":");
+	var seconds = 0;
+	for (let i = 0; i < times.length; i++) {
+	  seconds += Math.pow(60,i) * times[times.length - i - 1];
+	}
+	return seconds;
+      }
+
+      // 3. the API will call this function when the video player is ready.
+      function onPlayerReady(event) {
+	var playerTitle = document.getElementById('playertitle');	
+	var playerText = document.getElementById('playertext');	
+	var playerTime = document.getElementById('playertime');	
+	// just go ahead and start the video when the player is ready
+	// this will start the video at the point where it was last played
+	// since we just want to cue up the video, we set the volume to zero
+	curvol = player.getVolume()
+	player.setVolume(0);
+	event.target.playVideo();
+	setInterval(function() {
+	  let date = new Date(null);
+	  let curtime = player.getCurrentTime();
+	  date.setSeconds(curtime);
+	  playerTime.innerText = date.toISOString().substr(11, 8);
+	  let titlecnt = searchTitle(curtime);
+	  playerTitle.innerText = (titlecnt + 1) + '. ' + titles[titlecnt].title;
+	  playerText.innerHTML = '<div class="hanzi">' + titles[titlecnt].title + '</div>' + titles[titlecnt].text;
+	}, 100);	
+      }
+
+      // 4. The API calls this function when the player's state changes.
+      var done = false;
+      function onPlayerStateChange(event) {
+	//console.log("player state change: ", Object.keys(YT.PlayerState).find(key => YT.PlayerState[key] === event.data));
+	if (event.data == YT.PlayerState.PLAYING && !done) {
+	  // try to cue up the video but leave it paused
+	  // restore original volume after paused
+	  player.pauseVideo();
+	  player.setVolume(curvol);
+          done = true;
+        }
+      }
+      function seekToTitle(titlecnt) {
+	let bufferAfterSeek = true;
+	player.seekTo(titles[titlecnt].seconds, bufferAfterSeek);
+      }
+    </script>
+    <div id="titlesdata">00:23 天涯的尽头是风沙
+tian1 ya2 de5 jin4 tou5 shi4 feng1 sha1
+The edge of the remotest corner of the earth is wind and sand.
+
+@00:28 红尘的故事叫牵挂
+hong2 chen2 de5 gu4 shi4 jiao4 qian1 gua4
+The story of the world of mortals is called worry.
+
+@00:34 封刀隐没在寻常人家 东篱下
+feng1 dao1 yin3 mo4 zai4 xun2 chang2 ren2 jia1 dong1 li2 xia4
+Hung up the sword and gradually vanished into ordinary people’s (houses), under eastern fence.
+
+@00:40 闲云野鹤古刹
+xian2 yun2 ye3 he4 gu3 sha4
+Leisurely clouds, wild cranes and an old Buddhist temple.
+
+@00:45 快马在江湖里厮杀
+kuai4 ma3 zai4 jiang1 hu2 li3 si1 sha1
+Galloping horses fought at close quarters in rivers and lakes.
+
+@00:50 无非是名跟利放不下
+wu2 fei1 shi4 ming2 gen1 li4 fang4 bu2 xia4
+No more than being unable to let go of fame and wealth.
+
+@00:56 心中有江山的人岂能快意潇洒
+xin1 zhong1 you3 jiang1 shan1 de5 ren2 qi3 neng2 kuai4 yi4 xiao1 sa3
+For the person who has rivers and mountains in his heart, could he be able to be pleased, elegant and unconventional?
+
+@01:01 我只求与你共华发
+wo3 zhi3 qiu2 yu3 ni3 gong4 hua2 fa3
+I only ask for spending grey hair with you.
+
+@01:08 剑出鞘恩怨了 谁笑
+jian4 chu1 qiao4, en1 yuan4 liao3, shei2 xiao4
+Double-edged sword unsheathed; gratitude and grudges resolved. Who was smiling?
+
+@01:13 我只求今朝拥你 入怀抱
+wo3 zhi3 qiu2 jin1 zhao1 yong3 ni3 ru4 huai2 bao4
+I only ask for at this moment embracing you, into bosom.
+
+@01:18 红尘客栈风似刀 骤雨落宿命敲
+hong2 chen2 ke4 zhan4 feng1 si4 dao1， zhou4 yu3 luo4 su4 ming4 qiao1
+The worldly tavern’s wind is like a knife; rapid rains are falling like the strikes of predestination.
+
+@01:28 任武林谁领风骚
+ren4 wu3 lin2 shei2 ling3 feng1 sao1
+No matter who is leading the combative brilliance in martial arts circles.
+
+@01:30 我却只为你折腰
+wo3 que4 zhi3 wei4 ni3 zhe2 yao1
+I, however, only bow to you.
+
+@01:34 过荒村野桥寻世外古道
+guo4 huang1 chun1 ye3 qiao2 xun2 shi4 wai4 gu3 dao4
+Passed the wild bridge of the ruined village to seek the ancient road out of this world.
+
+@01:40 远离人间尘嚣
+yuan3 li2 ren2 jian1 chen2 xiao1
+Far away from human world’s hustle and bustle,
+
+@01:42 柳絮飘执子之手逍遥
+liu3 xu4 piao1 zhi2 zi3 shi1 shou3 xiao1 yao2
+Willow catkins floating, holding your hand, we are free and unfettered.
+
+@02:07 檐下窗棂斜映枝桠
+yan2 xia4 chuang1 ling2 xie2 ying4 zhi1 ya3
+underside of the eaves, twigs were reflected on window lattice.
+
+@02:59 与你席地对座饮茶
+yu3 ni3 xi2 di4 dui4 zuo4 yin3 cha2
+With you, on the floor, sitting across each other we drank tea.
+
+@02:59 我以工笔画将你牢牢的记下
+wo3 yi3 gong1 bi3 hua4 jiang1 ni3 lao2 lao2 de5 ji4 xia4
+I firmly recorded you with elaborate drawing.
+
+@02:59 提笔不为风雅
+ti2 bi3 bu2 wei4 feng1 ya3
+I raised my brush not for elegance.
+
+@02:59 灯下叹红颜近晚霞
+deng1 xia4 tan4 hong2 yan2 jin4 wan3 xia2
+Under the lamp, I sighed that the red color of your face is like the red clouds in the evening.
+
+@02:59 我说缘份一如参禅不说话
+wo3 shuo1 yuan2 fen4 yi4 ru2 shen1 chan2 bu4 shuo1 hua4
+I said that predestined affinity is like practicing Zen meditation, not saying anything.
+
+@02:59 你泪如梨花洒满了纸上的天下
+ni3 lei4 ru2 li2 hua1 sa3 man3 le5 zhi3 shang4 de5 tian1 xia4
+Your tears were like pear blossoms sprinkling all over the whole world of the paper.
+
+@02:59 爱恨如写意山水画
+ai4 hen4 ru2 xie3 yi4 shan1 shu3i hua4
+Love and hatred are like freely expressed landscape painting.
+
+@02:59 剑出鞘恩怨了 谁笑
+jian4 chu1 qiao4, en1 yuan4 liao3, shei2 xiao4
+Double-edged sword unsheathed; gratitude and grudges resolved. Who was smiling?
+
+@02:59 我只求今朝拥你 入怀抱
+wo3 zhi3 qiu2 jin1 zhao1 yong3 ni3 ru4 huai2 bao4
+I only ask for at this moment embracing you, into bosom.
+
+@02:59 红尘客栈风似刀 骤雨落宿命敲
+hong2 chen2 ke4 zhan4 feng1 xi4 dao1， zou4 yu3 luo4 su4 ming4 qiao1
+The worldly tavern’s wind is like a knife; rapid rains are falling like the strikes of predestination.
+
+@02:59 任武林谁领风骚
+ren4 wu3 lin2 shei2 ling3 feng1 sao1
+No matter who is leading the combative brilliance in martial arts circles.
+
+@02:59 我却只为你折腰
+wo3 que4 zhi3 wei4 ni3 zhe2 yao1
+I, however, only bow to you.
+
+@02:59 过荒村野桥寻世外古道
+guo4 huang1 chun1 ye3 qiao2 xun2 shi4 wai4 gu3 dao4
+Passed the wild bridge of the ruined village to seek the ancient road out of this world.
+
+@02:59 远离人间尘嚣
+yuan3 li2 ren2 jian1 chen2 xiao1
+Far away from human world’s hustle and bustle,
+
+@02:59 柳絮飘执子之手逍遥
+liu3 xu4 piao1 zhi2 zi3 shi1 shou3 xiao1 yao2
+Willow catkins floating, holding your hand, we are free and unfettered.
+
+@02:59 任武林谁领风骚
+ren4 wu3 lin2 shei2 ling3 feng1 sao1
+No matter who is leading the combative brilliance in martial arts circles.
+
+@02:59 我却只为你折腰
+wo3 que4 zhi3 wei4 ni3 zhe2 yao1
+I, however, only bow to you.
+
+@02:59 你回眸多娇我泪中带笑
+ni3 hui2 mou2 duo1 jiao1, wo3 lei4 zhong1 dai4 xiao4
+You glanced back with such lovable delicacy; smiles swelled in my tears.
+
+@02:59 酒招旗风中萧萧 剑出鞘恩怨了
+jiu3 zhao1 qi2 feng1 zhong1 xiao1 xiao1, jian4 chu1 qiao4 en1 yuan4 liao3
+The banner of tavern flapped in the wind. Double-edged sword unsheathed; gratitude and grudges resolved.</div>
+    <p id="credits">
+      Credits:<br>
+      <a href="http://www.chinesetolearn.com/jay-chou-hong-chen-ke-zhan-worldly-tavern/">Chinese To Learn</a><br>
+      Source code:
+      <a target="_blank" href="https://github.com/kaicarver/ytplayer">https://github.com/kaicarver/ytplayer</a>
+    </p>
+  </body>
+</html>

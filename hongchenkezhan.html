@@ -35,6 +35,7 @@
       table { width: 100%; }
       td { vertical-align: top; }
       td.text { width: 65%; text-align: center; }
+      td.lyrics { font-size: 0.8em; }
       span.title { cursor: pointer; color: darkblue; }
       .hanzi { font-size: 2em; color: black; }
     </style>
@@ -50,15 +51,23 @@
       <tr>
 	<td class="text">
 	  <div id="player">[video]</div>    
-	  <div id="playertext">[movement text]</div>
-	</td>
-	<td>
-	  <div id="playertitle">[movement title]</div>
+	  <div id="playertext">[lyric]</div>
+	  <div id="playertitle">&nbsp;</div>
 	  <div id="playertime">[video timecode]</div>
+	  <button onclick="saveTimeCode()">Save Timecode</button><br>
+	  <textarea id="savedtimecodes">Saved Timecodes:</textarea>
+	</td>
+	<td class="lyrics">
 	  <div id="titleslabels">[titles labels]</div>
 	</td>
       </tr>
     </table>
+    <p id="credits">
+      Credits:<br>
+      <a href="http://www.chinesetolearn.com/jay-chou-hong-chen-ke-zhan-worldly-tavern/">Chinese To Learn</a><br>
+      Source code:
+      <a target="_blank" href="https://github.com/kaicarver/ytplayer">https://github.com/kaicarver/ytplayer</a>
+    </p>
     <script>
       // 1. load the IFrame Player API code asynchronously.
       var tag = document.createElement('script');
@@ -73,8 +82,8 @@
 	// create an <iframe> (and YouTube player) after the API code downloads.
 	// Embedded players must have a viewport that is at least 200px by 200px
         player = new YT.Player('player', {
-          height: '200',
-          width: '400', // for 16/9 aspect ratio
+          height: '250',
+          width: '500', // for 16/9 aspect ratio
           videoId: 'L6joGUdc6y4',
           events: {
             'onReady': onPlayerReady,
@@ -127,6 +136,8 @@
       }
 
       // 3. the API will call this function when the video player is ready.
+      var curtime = -1;
+      var curtitlecnt = -1;
       function onPlayerReady(event) {
 	var playerTitle = document.getElementById('playertitle');	
 	var playerText = document.getElementById('playertext');	
@@ -138,13 +149,21 @@
 	player.setVolume(0);
 	event.target.playVideo();
 	setInterval(function() {
-	  let date = new Date(null);
-	  let curtime = player.getCurrentTime();
-	  date.setSeconds(curtime);
-	  playerTime.innerText = date.toISOString().substr(11, 8);
-	  let titlecnt = searchTitle(curtime);
-	  playerTitle.innerText = (titlecnt + 1) + '. ' + titles[titlecnt].title;
-	  playerText.innerHTML = '<div class="hanzi">' + titles[titlecnt].title + '</div>' + titles[titlecnt].text;
+	  let oldcurtime = curtime;
+	  curtime = player.getCurrentTime();
+	  if (curtime !== oldcurtime) {
+	    // only update time if time has changed
+	    let date = new Date(null);
+	    date.setSeconds(curtime);
+	    playerTime.innerText = date.toISOString().substr(11, 8);
+	    let oldtitlecnt = curtitlecnt;
+	    curtitlecnt = searchTitle(curtime);
+	    // only update lyric if it has changed
+	    if (curtitlecnt !== oldtitlecnt) {
+	      //playerTitle.innerText = (curtitlecnt + 1) + '. ' + titles[curtitlecnt].title;
+	      playerText.innerHTML = '<div class="hanzi">' + titles[curtitlecnt].title + '</div>' + titles[curtitlecnt].text;
+	    }
+	  }
 	}, 100);	
       }
 
@@ -164,8 +183,17 @@
 	let bufferAfterSeek = true;
 	player.seekTo(titles[titlecnt].seconds, bufferAfterSeek);
       }
+      function saveTimeCode() {
+	let date = new Date(null);
+	date.setSeconds(player.getCurrentTime()); 
+	document.getElementById('savedtimecodes').value += "\n" + date.toISOString().substr(11, 11);
+      }
     </script>
-    <div id="titlesdata">00:23 天涯的尽头是风沙
+    <div id="titlesdata">00:00 紅塵客棧 - 周杰倫 / 方文山
+Hong2chen2 Ke4zhan4 - Zhou1 Jie2lun2 / Fang4 Wen2shan1
+Worldly Tavern - Jay Chou / Vincent Fang (lyrics)
+
+@00:23 天涯的尽头是风沙
 tian1 ya2 de5 jin4 tou5 shi4 feng1 sha1
 The edge of the remotest corner of the earth is wind and sand.
 
@@ -178,7 +206,7 @@ feng1 dao1 yin3 mo4 zai4 xun2 chang2 ren2 jia1 dong1 li2 xia4
 Hung up the sword and gradually vanished into ordinary people’s (houses), under eastern fence.
 
 @00:40 闲云野鹤古刹
-xian2 yun2 ye3 he4 gu3 sha4
+xian2 yun2 ye3 he4 gu3 cha4
 Leisurely clouds, wild cranes and an old Buddhist temple.
 
 @00:45 快马在江湖里厮杀
@@ -189,7 +217,7 @@ Galloping horses fought at close quarters in rivers and lakes.
 wu2 fei1 shi4 ming2 gen1 li4 fang4 bu2 xia4
 No more than being unable to let go of fame and wealth.
 
-@00:56 心中有江山的人岂能快意潇洒
+@00:55.5 心中有江山的人岂能快意潇洒
 xin1 zhong1 you3 jiang1 shan1 de5 ren2 qi3 neng2 kuai4 yi4 xiao1 sa3
 For the person who has rivers and mountains in his heart, could he be able to be pleased, elegant and unconventional?
 
@@ -209,110 +237,1471 @@ I only ask for at this moment embracing you, into bosom.
 hong2 chen2 ke4 zhan4 feng1 si4 dao1， zhou4 yu3 luo4 su4 ming4 qiao1
 The worldly tavern’s wind is like a knife; rapid rains are falling like the strikes of predestination.
 
-@01:28 任武林谁领风骚
-ren4 wu3 lin2 shei2 ling3 feng1 sao1
-No matter who is leading the combative brilliance in martial arts circles.
-
-@01:30 我却只为你折腰
-wo3 que4 zhi3 wei4 ni3 zhe2 yao1
-I, however, only bow to you.
+@01:28 任武林谁领风骚我却只为你折腰
+ren4 wu3 lin2 shei2 ling3 feng1 sao1 wo3 que4 zhi3 wei4 ni3 zhe2 yao1
+No matter who is leading the combative brilliance in martial arts circles. I, however, only bow to you.
 
 @01:34 过荒村野桥寻世外古道
-guo4 huang1 chun1 ye3 qiao2 xun2 shi4 wai4 gu3 dao4
+guo4 huang1 cun1 ye3 qiao2 xun2 shi4 wai4 gu3 dao4
 Passed the wild bridge of the ruined village to seek the ancient road out of this world.
 
-@01:40 远离人间尘嚣
-yuan3 li2 ren2 jian1 chen2 xiao1
-Far away from human world’s hustle and bustle,
+@01:40 远离人间尘嚣柳絮飘执子之手逍遥
+yuan3 li2 ren2 jian1 chen2 xiao1 liu3 xu4 piao1 zhi2 zi3 shi1 shou3 xiao1 yao2
+Far away from human world’s hustle and bustle, willow catkins floating, holding your hand, we are free and unfettered.
 
-@01:42 柳絮飘执子之手逍遥
-liu3 xu4 piao1 zhi2 zi3 shi1 shou3 xiao1 yao2
-Willow catkins floating, holding your hand, we are free and unfettered.
 
 @02:07 檐下窗棂斜映枝桠
 yan2 xia4 chuang1 ling2 xie2 ying4 zhi1 ya3
 underside of the eaves, twigs were reflected on window lattice.
 
-@02:59 与你席地对座饮茶
+@02:13 与你席地对座饮茶
 yu3 ni3 xi2 di4 dui4 zuo4 yin3 cha2
 With you, on the floor, sitting across each other we drank tea.
 
-@02:59 我以工笔画将你牢牢的记下
+@02:18 我以工笔画将你牢牢的记下
 wo3 yi3 gong1 bi3 hua4 jiang1 ni3 lao2 lao2 de5 ji4 xia4
 I firmly recorded you with elaborate drawing.
 
-@02:59 提笔不为风雅
+@02:24 提笔不为风雅
 ti2 bi3 bu2 wei4 feng1 ya3
 I raised my brush not for elegance.
 
-@02:59 灯下叹红颜近晚霞
+@02:29 灯下叹红颜近晚霞
 deng1 xia4 tan4 hong2 yan2 jin4 wan3 xia2
 Under the lamp, I sighed that the red color of your face is like the red clouds in the evening.
 
-@02:59 我说缘份一如参禅不说话
+@02:34 我说缘份一如参禅不说话
 wo3 shuo1 yuan2 fen4 yi4 ru2 shen1 chan2 bu4 shuo1 hua4
 I said that predestined affinity is like practicing Zen meditation, not saying anything.
 
-@02:59 你泪如梨花洒满了纸上的天下
+@02:39 你泪如梨花洒满了纸上的天下
 ni3 lei4 ru2 li2 hua1 sa3 man3 le5 zhi3 shang4 de5 tian1 xia4
 Your tears were like pear blossoms sprinkling all over the whole world of the paper.
 
-@02:59 爱恨如写意山水画
-ai4 hen4 ru2 xie3 yi4 shan1 shu3i hua4
+@02:45 爱恨如写意山水画
+ai4 hen4 ru2 xie3 yi4 shan1 shui3 hua4
 Love and hatred are like freely expressed landscape painting.
 
-@02:59 剑出鞘恩怨了 谁笑
+@02:51 剑出鞘恩怨了 谁笑
 jian4 chu1 qiao4, en1 yuan4 liao3, shei2 xiao4
 Double-edged sword unsheathed; gratitude and grudges resolved. Who was smiling?
 
-@02:59 我只求今朝拥你 入怀抱
+@02:57 我只求今朝拥你 入怀抱
 wo3 zhi3 qiu2 jin1 zhao1 yong3 ni3 ru4 huai2 bao4
 I only ask for at this moment embracing you, into bosom.
 
-@02:59 红尘客栈风似刀 骤雨落宿命敲
-hong2 chen2 ke4 zhan4 feng1 xi4 dao1， zou4 yu3 luo4 su4 ming4 qiao1
+@03:02 红尘客栈风似刀 骤雨落宿命敲
+hong2 chen2 ke4 zhan4 feng1 si4 dao1，zou4 yu3 luo4 su4 ming4 qiao1
 The worldly tavern’s wind is like a knife; rapid rains are falling like the strikes of predestination.
 
-@02:59 任武林谁领风骚
-ren4 wu3 lin2 shei2 ling3 feng1 sao1
-No matter who is leading the combative brilliance in martial arts circles.
+@03:12 任武林谁领风骚我却只为你折腰
+ren4 wu3 lin2 shei2 ling3 feng1 sao1 wo3 que4 zhi3 wei4 ni3 zhe2 yao1
+No matter who is leading the combative brilliance in martial arts circles. I, however, only bow to you.
 
-@02:59 我却只为你折腰
-wo3 que4 zhi3 wei4 ni3 zhe2 yao1
-I, however, only bow to you.
-
-@02:59 过荒村野桥寻世外古道
+@03:18 过荒村野桥寻世外古道
 guo4 huang1 chun1 ye3 qiao2 xun2 shi4 wai4 gu3 dao4
 Passed the wild bridge of the ruined village to seek the ancient road out of this world.
 
-@02:59 远离人间尘嚣
-yuan3 li2 ren2 jian1 chen2 xiao1
-Far away from human world’s hustle and bustle,
+@03:23 远离人间尘嚣柳絮飘执子之手逍遥
+yuan3 li2 ren2 jian1 chen2 xiao1 liu3 xu4 piao1 zhi2 zi3 shi1 shou3 xiao1 yao2
+Far away from human world’s hustle and bustle, Willow catkins floating, holding your hand, we are free and unfettered.
 
-@02:59 柳絮飘执子之手逍遥
-liu3 xu4 piao1 zhi2 zi3 shi1 shou3 xiao1 yao2
-Willow catkins floating, holding your hand, we are free and unfettered.
+@03:50 任武林谁领风骚我却只为你折腰
+ren4 wu3 lin2 shei2 ling3 feng1 sao1 wo3 que4 zhi3 wei4 ni3 zhe2 yao1
+No matter who is leading the combative brilliance in martial arts circles. I, however, only bow to you.
 
-@02:59 任武林谁领风骚
-ren4 wu3 lin2 shei2 ling3 feng1 sao1
-No matter who is leading the combative brilliance in martial arts circles.
-
-@02:59 我却只为你折腰
-wo3 que4 zhi3 wei4 ni3 zhe2 yao1
-I, however, only bow to you.
-
-@02:59 你回眸多娇我泪中带笑
+@03:56 你回眸多娇我泪中带笑
 ni3 hui2 mou2 duo1 jiao1, wo3 lei4 zhong1 dai4 xiao4
 You glanced back with such lovable delicacy; smiles swelled in my tears.
 
-@02:59 酒招旗风中萧萧 剑出鞘恩怨了
+@04:01 酒招旗风中萧萧 剑出鞘恩怨了
 jiu3 zhao1 qi2 feng1 zhong1 xiao1 xiao1, jian4 chu1 qiao4 en1 yuan4 liao3
 The banner of tavern flapped in the wind. Double-edged sword unsheathed; gratitude and grudges resolved.</div>
-    <p id="credits">
-      Credits:<br>
-      <a href="http://www.chinesetolearn.com/jay-chou-hong-chen-ke-zhan-worldly-tavern/">Chinese To Learn</a><br>
-      Source code:
-      <a target="_blank" href="https://github.com/kaicarver/ytplayer">https://github.com/kaicarver/ytplayer</a>
-    </p>
   </body>
 </html>
+<!--
+http://jaychoustudio.com/jay-chou-translations/worldly-tavern/164 is offline?...
+http://web.archive.org/web/20160405074430/http://jaychoustudio.com/jay-chou-translations/worldly-tavern/164
+
+Translation/pinyin/lyrics by Ho@multistars.com
+
+Worldly Tavern
+Composer: Jay Chou (周杰倫) (周杰伦)
+Lyricist: Vincent Fang (方文山) (方文山) 
+
+On the edge of the end of the world is wind borne sand
+The story of worldly affairs is called missing someone
+I retire my sword and hide away amongst ordinary folk in Dongli
+A drifting cloud, a hovering stork and an old Buddhist temple
+
+Post-horse, they are slaughtering each other in the Jiang Hu
+It's all because they can't let go of the fame and fortune
+How can people who have the kingdom in their hearts be pleased and unaffected
+All I seek is to be with you until we have gray hair
+
+The sword is unsheathed, the gratitudes and grudges are resolved, who smiles
+All I seek at present is to hold you in my arms
+The wind in the worldly tavern is like a blade, the rain shower falls, the drumbeat of karma
+No matter who leads the Wulin with excellence, I will only bow for you
+Past the desolate villages and wild bridges, looking for the ancient path beyond the noisy world
+Far away from the hustle and bustle of the world, the willow catkin always floats together freely
+
+Under the eaves the branches are slanted against the window frame
+With you, we sit here and drink tea facing each other
+I firmly record down your features using fine brush painting
+I've started writing but not for literary pursuits
+
+Under the lights, I sigh as your red face looks close to the sunset glow
+I say fate is just like Zen meditation and not saying a word
+Your tears are like pear blossoms scattered all over the world on top of the paper
+Love and hate are like drawing a landscape painting freehand
+
+No matter who leads the Wulin with excellence, I will only bow for you
+You glance back so tenderly, I smile with tears
+The tavern banner rustles in the wind, the sword is unsheathed, the gratitudes and grudges are resolved
+
+Traditional
+
+Translation/pinyin/lyrics by Ho@multistars.com
+
+紅
+hong
+塵
+chen
+客
+ke
+棧
+zhan
+
+Composer: Jay Chou (周杰倫) (周杰伦)
+Lyricist: Vincent Fang (方文山) (方文山)
+
+天
+tian
+涯
+ya
+的
+de
+盡
+jin
+頭
+tou
+是
+shi
+風
+feng
+沙
+sha
+紅
+hong
+塵
+chen
+的
+de
+故
+gu
+事
+shi
+叫
+jiao
+牽
+qian
+掛
+gua
+封
+feng
+刀
+dao
+隱
+yin
+沒
+mo
+在
+zai
+尋
+xun
+常
+chang
+人
+ren
+家
+jia
+東
+dong
+籬
+li
+下
+xia
+閒
+xian
+雲
+yun
+野
+ye
+鶴
+he
+古
+gu
+剎
+cha
+
+快
+kuai
+馬
+ma
+在
+zai
+江
+jiang
+湖
+hu
+裡
+li
+廝
+si
+殺
+sha
+無
+wu
+非
+fei
+是
+shi
+名
+ming
+跟
+gen
+利
+li
+放
+fang
+不
+bu
+下
+xia
+心
+xin
+中
+zhong
+有
+you
+江
+jiang
+山
+shan
+的
+de
+人
+ren
+豈
+qi
+能
+neng
+快
+kuai
+意
+yi
+瀟
+xiao
+灑
+sa
+我
+wo
+只
+zhi
+求
+qiu
+與
+yu
+妳
+ni
+共
+gong
+華
+hua
+髮
+fa
+
+劍
+jian
+出
+chu
+鞘
+qiao
+恩
+en
+怨
+yuan
+了
+liao
+誰
+shui
+笑
+xiao
+我
+wo
+只
+zhi
+求
+qiu
+今
+jin
+朝
+zhao
+擁
+yong
+妳
+ni
+入
+ru
+懷
+huai
+抱
+bao
+紅
+hong
+塵
+chen
+客
+ke
+棧
+zhan
+風
+feng
+似
+si
+刀
+dao
+驟
+zou
+雨
+yu
+落
+luo
+宿
+su
+命
+ming
+敲
+qiao
+任
+ren
+武
+wu
+林
+lin
+誰
+shui
+領
+ling
+風
+feng
+騷
+sao
+我
+wo
+卻
+que
+只
+zhi
+為
+wei
+妳
+ni
+折
+zhe
+腰
+yao
+過
+guo
+荒
+huang
+村
+cun
+野
+ye
+橋
+qiao
+尋
+xun
+世
+shi
+外
+wai
+古
+gu
+道
+dao
+遠
+yuan
+離
+li
+人
+ren
+間
+jian
+塵
+chen
+囂
+xiao
+柳
+liu
+絮
+xu
+飄
+piao
+執
+zhi
+子
+zi
+之
+zhi
+手
+shou
+逍
+xiao
+遙
+yao
+
+簷
+yan
+下
+xia
+窗
+chuang
+櫺
+ling
+斜
+xie
+映
+ying
+枝
+zhi
+椏
+ya
+與
+yu
+妳
+ni
+席
+xi
+地
+di
+對
+dui
+座
+zuo
+飲
+yin
+茶
+cha
+我
+wo
+以
+yi
+工
+gong
+筆
+bi
+畫
+hua
+將
+jiang
+妳
+ni
+牢
+lao
+牢
+lao
+的
+de
+記
+ji
+下
+xia
+提
+ti
+筆
+bi
+不
+bu
+為
+wei
+風
+feng
+雅
+ya
+
+燈
+deng
+下
+xia
+嘆
+tan
+紅
+hong
+顏
+yan
+近
+jin
+晚
+wan
+霞
+xia
+我
+wo
+說
+shuo
+緣
+yuan
+份
+fen
+一
+yi
+如
+ru
+參
+can
+禪
+chan
+不
+bu
+說
+shuo
+話
+hua
+妳
+ni
+淚
+lei
+如
+ru
+梨
+li
+花
+hua
+灑
+sa
+滿
+man
+了
+le
+紙
+zhi
+上
+shang
+的
+de
+天
+tian
+下
+xia
+愛
+ai
+恨
+hen
+如
+ru
+寫
+xie
+意
+yi
+山
+shan
+水
+shui
+畫
+hua
+
+Repeat (Hide)
+
+劍
+jian
+出
+chu
+鞘
+qiao
+恩
+en
+怨
+yuan
+了
+liao
+誰
+shui
+笑
+xiao
+我
+wo
+只
+zhi
+求
+qiu
+今
+jin
+朝
+zhao
+擁
+yong
+妳
+ni
+入
+ru
+懷
+huai
+抱
+bao
+紅
+hong
+塵
+chen
+客
+ke
+棧
+zhan
+風
+feng
+似
+si
+刀
+dao
+驟
+zou
+雨
+yu
+落
+luo
+宿
+su
+命
+ming
+敲
+qiao
+任
+ren
+武
+wu
+林
+lin
+誰
+shui
+領
+ling
+風
+feng
+騷
+sao
+我
+wo
+卻
+que
+只
+zhi
+為
+wei
+妳
+ni
+折
+zhe
+腰
+yao
+過
+guo
+荒
+huang
+村
+cun
+野
+ye
+橋
+qiao
+尋
+xun
+世
+shi
+外
+wai
+古
+gu
+道
+dao
+遠
+yuan
+離
+li
+人
+ren
+間
+jian
+塵
+chen
+囂
+xiao
+柳
+liu
+絮
+xu
+飄
+piao
+執
+zhi
+子
+zi
+之
+zhi
+手
+shou
+逍
+xiao
+遙
+yao
+
+任
+ren
+武
+wu
+林
+lin
+誰
+shui
+領
+ling
+風
+feng
+騷
+sao
+我
+wo
+卻
+que
+只
+zhi
+為
+wei
+妳
+ni
+折
+zhe
+腰
+yao
+妳
+ni
+回
+hui
+眸
+mou
+多
+duo
+嬌
+jiao
+我
+wo
+淚
+lei
+中
+zhong
+帶
+dai
+笑
+xiao
+酒
+jiu
+招
+zhao
+旗
+qi
+風
+feng
+中
+zhong
+蕭
+xiao
+蕭
+xiao
+劍
+jian
+出
+chu
+鞘
+qiao
+恩
+en
+怨
+yuan
+了
+liao
+
+
+
+Translation/pinyin/lyrics by Ho@multistars.com
+
+Simplified
+
+红
+hong
+尘
+chen
+客
+ke
+栈
+zhan
+
+Composer: Jay Chou (周杰倫) (周杰伦)
+Lyricist: Vincent Fang (方文山) (方文山)
+
+天
+tian
+涯
+ya
+的
+de
+尽
+jin
+头
+tou
+是
+shi
+风
+feng
+沙
+sha
+红
+hong
+尘
+chen
+的
+de
+故
+gu
+事
+shi
+叫
+jiao
+牵
+qian
+挂
+gua
+封
+feng
+刀
+dao
+隐
+yin
+没
+mo
+在
+zai
+寻
+xun
+常
+chang
+人
+ren
+家
+jia
+东
+dong
+篱
+li
+下
+xia
+闲
+xian
+云
+yun
+野
+ye
+鹤
+he
+古
+gu
+刹
+cha
+
+快
+kuai
+马
+ma
+在
+zai
+江
+jiang
+湖
+hu
+里
+li
+厮
+si
+杀
+sha
+无
+wu
+非
+fei
+是
+shi
+名
+ming
+跟
+gen
+利
+li
+放
+fang
+不
+bu
+下
+xia
+心
+xin
+中
+zhong
+有
+you
+江
+jiang
+山
+shan
+的
+de
+人
+ren
+岂
+qi
+能
+neng
+快
+kuai
+意
+yi
+潇
+xiao
+洒
+sa
+我
+wo
+只
+zhi
+求
+qiu
+与
+yu
+你
+ni
+共
+gong
+华
+hua
+发
+fa
+
+剑
+jian
+出
+chu
+鞘
+qiao
+恩
+en
+怨
+yuan
+了
+liao
+谁
+shui
+笑
+xiao
+我
+wo
+只
+zhi
+求
+qiu
+今
+jin
+朝
+zhao
+拥
+yong
+你
+ni
+入
+ru
+怀
+huai
+抱
+bao
+红
+hong
+尘
+chen
+客
+ke
+栈
+zhan
+风
+feng
+似
+si
+刀
+dao
+骤
+zou
+雨
+yu
+落
+luo
+宿
+su
+命
+ming
+敲
+qiao
+任
+ren
+武
+wu
+林
+lin
+谁
+shui
+领
+ling
+风
+feng
+骚
+sao
+我
+wo
+却
+que
+只
+zhi
+为
+wei
+你
+ni
+折
+zhe
+腰
+yao
+过
+guo
+荒
+huang
+村
+cun
+野
+ye
+桥
+qiao
+寻
+xun
+世
+shi
+外
+wai
+古
+gu
+道
+dao
+远
+yuan
+离
+li
+人
+ren
+间
+jian
+尘
+chen
+嚣
+xiao
+柳
+liu
+絮
+xu
+飘
+piao
+执
+zhi
+子
+zi
+之
+zhi
+手
+shou
+逍
+xiao
+遥
+yao
+
+檐
+yan
+下
+xia
+窗
+chuang
+棂
+ling
+斜
+xie
+映
+ying
+枝
+zhi
+桠
+ya
+与
+yu
+你
+ni
+席
+xi
+地
+di
+对
+dui
+座
+zuo
+饮
+yin
+茶
+cha
+我
+wo
+以
+yi
+工
+gong
+笔
+bi
+画
+hua
+将
+jiang
+你
+ni
+牢
+lao
+牢
+lao
+的
+de
+记
+ji
+下
+xia
+提
+ti
+笔
+bi
+不
+bu
+为
+wei
+风
+feng
+雅
+ya
+
+灯
+deng
+下
+xia
+叹
+tan
+红
+hong
+颜
+yan
+近
+jin
+晚
+wan
+霞
+xia
+我
+wo
+说
+shuo
+缘
+yuan
+份
+fen
+一
+yi
+如
+ru
+参
+can
+禅
+chan
+不
+bu
+说
+shuo
+话
+hua
+你
+ni
+泪
+lei
+如
+ru
+梨
+li
+花
+hua
+洒
+sa
+满
+man
+了
+le
+纸
+zhi
+上
+shang
+的
+de
+天
+tian
+下
+xia
+爱
+ai
+恨
+hen
+如
+ru
+写
+xie
+意
+yi
+山
+shan
+水
+shui
+画
+hua
+
+Repeat (Hide)
+
+剑
+jian
+出
+chu
+鞘
+qiao
+恩
+en
+怨
+yuan
+了
+liao
+谁
+shui
+笑
+xiao
+我
+wo
+只
+zhi
+求
+qiu
+今
+jin
+朝
+zhao
+拥
+yong
+你
+ni
+入
+ru
+怀
+huai
+抱
+bao
+红
+hong
+尘
+chen
+客
+ke
+栈
+zhan
+风
+feng
+似
+si
+刀
+dao
+骤
+zou
+雨
+yu
+落
+luo
+宿
+su
+命
+ming
+敲
+qiao
+任
+ren
+武
+wu
+林
+lin
+谁
+shui
+领
+ling
+风
+feng
+骚
+sao
+我
+wo
+却
+que
+只
+zhi
+为
+wei
+你
+ni
+折
+zhe
+腰
+yao
+过
+guo
+荒
+huang
+村
+cun
+野
+ye
+桥
+qiao
+寻
+xun
+世
+shi
+外
+wai
+古
+gu
+道
+dao
+远
+yuan
+离
+li
+人
+ren
+间
+jian
+尘
+chen
+嚣
+xiao
+柳
+liu
+絮
+xu
+飘
+piao
+执
+zhi
+子
+zi
+之
+zhi
+手
+shou
+逍
+xiao
+遥
+yao
+
+任
+ren
+武
+wu
+林
+lin
+谁
+shui
+领
+ling
+风
+feng
+骚
+sao
+我
+wo
+却
+que
+只
+zhi
+为
+wei
+你
+ni
+折
+zhe
+腰
+yao
+你
+ni
+回
+hui
+眸
+mou
+多
+duo
+娇
+jiao
+我
+wo
+泪
+lei
+中
+zhong
+带
+dai
+笑
+xiao
+酒
+jiu
+招
+zhao
+旗
+qi
+风
+feng
+中
+zhong
+萧
+xiao
+萧
+xiao
+剑
+jian
+出
+chu
+鞘
+qiao
+恩
+en
+怨
+yuan
+了
+liao
+
+-->

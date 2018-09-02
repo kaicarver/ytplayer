@@ -54,6 +54,7 @@
 	  <div id="playertext">[lyric]</div>
 	  <div id="playertitle">&nbsp;</div>
 	  <div id="playertime">[video timecode]</div>
+	  <div id="playertimems">[video timecode]</div>
 	  <button onclick="saveTimeCode()">Save Timecode</button><br>
 	  <textarea id="savedtimecodes">Saved Timecodes:</textarea>
 	</td>
@@ -113,7 +114,7 @@
 	let list = [];
 	for (let i = 0; i < titles.length; i++) {
 	  list.push('<span class="title" title="'  + (i+1) + '. ' + titles[i].timecode + '" onclick="seekToTitle(' + i + ')">' +
-		    titles[i].timecode + ' ' + titles[i].title + '</span><br/>');
+		    titles[i].title + '</span><br/>');
 	}
 	document.getElementById('titleslabels').innerHTML = list.join("");
       }
@@ -138,10 +139,12 @@
       // 3. the API will call this function when the video player is ready.
       var curtime = -1;
       var curtitlecnt = -1;
+      var startplaydate;
       function onPlayerReady(event) {
 	var playerTitle = document.getElementById('playertitle');	
 	var playerText = document.getElementById('playertext');	
 	var playerTime = document.getElementById('playertime');	
+	var playerTimeMs = document.getElementById('playertimems');	
 	// just go ahead and start the video when the player is ready
 	// this will start the video at the point where it was last played
 	// since we just want to cue up the video, we set the volume to zero
@@ -155,7 +158,11 @@
 	    // only update time if time has changed
 	    let date = new Date(null);
 	    date.setSeconds(curtime);
-	    playerTime.innerText = date.toISOString().substr(11, 8);
+	    let now = new Date();
+	    let elapsedtimems = now.getTime() - startplaydate.getTime();
+	    let elapsed = new Date(elapsedtimems);
+	    playerTime.innerText = date.toISOString().substr(11,11);
+	    playerTimeMs.innerText = elapsed.toISOString().substr(11, 11);
 	    let oldtitlecnt = curtitlecnt;
 	    curtitlecnt = searchTitle(curtime);
 	    // only update lyric if it has changed
@@ -170,13 +177,15 @@
       // 4. The API calls this function when the player's state changes.
       var done = false;
       function onPlayerStateChange(event) {
-	//console.log("player state change: ", Object.keys(YT.PlayerState).find(key => YT.PlayerState[key] === event.data));
+	console.log("player state change: ", Object.keys(YT.PlayerState).find(key => YT.PlayerState[key] === event.data));
 	if (event.data == YT.PlayerState.PLAYING && !done) {
 	  // try to cue up the video but leave it paused
 	  // restore original volume after paused
 	  player.pauseVideo();
 	  player.setVolume(curvol);
-          done = true;
+	  done = true;
+	  startplaydate = new Date();
+	  startplaydate.setSeconds(player.getCurrentTime());
         }
       }
       function seekToTitle(titlecnt) {
@@ -190,7 +199,7 @@
       }
     </script>
     <div id="titlesdata">00:00 紅塵客棧 - 周杰倫 / 方文山
-Hóngcchén Kèzhàn  - Zhou1 Jie2lun2 / Fang4 Wen2shan1
+Hóngchén Kèzhàn  - Zhou1 Jie2lun2 / Fang4 Wen2shan1
 Worldly Tavern - Jay Chou / Vincent Fang (lyrics)
 
 @00:23 天涯的尽头是风沙
@@ -320,6 +329,10 @@ The banner of tavern flapped in the wind. Double-edged sword unsheathed; gratitu
   </body>
 </html>
 <!--
+TODO: allow registering times at smaller granularity than 1 second
+TODO: mode where it plays, and it pauses same amoutn of time for you to repeat
+TODO: karaoke like following word by word, or character by character
+
 http://jaychoustudio.com/jay-chou-translations/worldly-tavern/164 is offline?...
 http://web.archive.org/web/20160405074430/http://jaychoustudio.com/jay-chou-translations/worldly-tavern/164
 

@@ -2,7 +2,7 @@ Play Youtube songs with synced translation
 ===
 
 * [紅塵客棧 - 周杰倫<br>
-Hóngchén Kèzhàn- Zhōu Jiélún<br>
+Hóngchén Kèzhàn - Zhōu Jiélún<br>
 Worldy Tavern - Jay Chou](https://rawgit.com/kaicarver/ytplayer/master/hongchenkezhan.html)
 
 * [Matthäus-Passion](https://rawgit.com/kaicarver/ytplayer/master/matthaus.html)
@@ -16,6 +16,12 @@ Fragrance of Rice - Jay Chou](http://htmlpreview.github.io/?https://github.com/k
 * [起飛<br>
 Qǐfēi<br>
 Take off - (graduation song)](https://rawgit.com/kaicarver/ytplayer/master/qifei.html)
+
+Another song:<br>
+
+* [一剪梅 -费玉清<br>
+Yì jiǎn méi - Fèi Yùqīng<br>
+A Spray of Plum Blossoms - Fei Yu-ching](https://rawgit.com/kaicarver/ytplayer/master/yijianmei.html)
 
 See also:
 
